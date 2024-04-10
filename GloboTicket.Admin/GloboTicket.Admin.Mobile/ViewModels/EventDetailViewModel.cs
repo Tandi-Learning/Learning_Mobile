@@ -1,4 +1,5 @@
-﻿using GloboTicket.Admin.Mobile.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using GloboTicket.Admin.Mobile.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -16,7 +17,8 @@ using static System.Net.WebRequestMethods;
 namespace GloboTicket.Admin.Mobile.ViewModels;
 
 //public partial class EventDetailViewModel : ViewModelBase, IQueryAttributable
-public class EventDetailViewModel : INotifyPropertyChanged
+//public class EventDetailViewModel : INotifyPropertyChanged
+public class EventDetailViewModel : ObservableObject
 {
     private Guid _id;
     private string _name = default!;
@@ -31,120 +33,55 @@ public class EventDetailViewModel : INotifyPropertyChanged
     public Guid Id
     {
         get => _id;
-        set
-        {
-            if (!value.Equals(_id))
-            {
-                _id = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetProperty<Guid>(ref _id, value);
     }
 
     public string Name
     {
         get => _name;
-        set
-        {
-            if (!value.Equals(_name))
-            {
-                _name = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetProperty<string>(ref _name, value);
     }
 
     public double Price
     {
         get => _price;
-        set
-        {
-            if (!value.Equals(_price))
-            {
-                _price = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetProperty<double>(ref _price, value);
     }
 
     public string ImageUrl
     {
         get => _imageUrl;
-        set
-        {
-            if (!value.Equals(_imageUrl))
-            {
-                _imageUrl = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetProperty<string>(ref _imageUrl, value);
     }
 
     public EventStatusEnum EventStatus
     {
         get => _eventStatus;
-        set
-        {
-            if (!value.Equals(_eventStatus))
-            {
-                _eventStatus = value;
-                OnPropertyChanged();
-                ((Command)CancelEventCommand).ChangeCanExecute();
-            }
-        }
+        set => SetProperty<EventStatusEnum>(ref _eventStatus, value);
     }
 
     public DateTime Date
     {
         get => _date;
-        set
-        {
-            if (!value.Equals(_date))
-            {
-                _date = value;
-                OnPropertyChanged();
-                ((Command)CancelEventCommand).ChangeCanExecute();
-            }
-        }
+        set => SetProperty<DateTime>(ref _date, value);
     }
 
     public string Description
     {
         get => _description;
-        set
-        {
-            if (!value.Equals(_description))
-            {
-                _description = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetProperty<string>(ref _description, value);
     }
 
     public List<string> Artists
     {
         get => _artists;
-        set
-        {
-            if (!value.Equals(_artists))
-            {
-                _artists = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetProperty<List<string>>(ref _artists, value);
     }
 
     public CategoryViewModel Category
     {
         get => _category;
-        set
-        {
-            if (!value.Equals(_category))
-            {
-                _category = value;
-                OnPropertyChanged();
-            }
-        }
+        set => SetProperty<CategoryViewModel>(ref _category, value);
     }
 
     private bool _showLargerImage;
@@ -152,14 +89,10 @@ public class EventDetailViewModel : INotifyPropertyChanged
     public bool ShowLargerImage
     {
         get => _showLargerImage;
-        set
+        set 
         {
-            if (!value.Equals(_showLargerImage))
-            {
-                _showLargerImage = value;
-                OnPropertyChanged();
+            if (SetProperty<bool>(ref _showLargerImage, value))
                 OnPropertyChanged(nameof(ShowThumbnailImage));
-            }
         }
     }
 
@@ -194,8 +127,8 @@ public class EventDetailViewModel : INotifyPropertyChanged
         };
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    //public event PropertyChangedEventHandler? PropertyChanged;
 
-    public void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    //public void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    //    => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
