@@ -7,18 +7,11 @@ using System.Threading.Tasks;
 
 namespace GloboTicket.Admin.Mobile.ViewModels;
 
-public class CategoryViewModel : ObservableObject
+public partial class CategoryViewModel : ObservableObject
 {
+    [ObservableProperty]
     private Guid _id;
+
+    [ObservableProperty]
     private string _name = default!;
-
-    public Guid Id { 
-        get => _id; 
-        set => SetProperty<Guid>(ref _id, value); 
-    }
-
-    public string Name {
-        get => _name;
-        set => SetProperty<string>(ref _name, value);
-    }
 }

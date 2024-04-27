@@ -2,9 +2,9 @@ using GloboTicket.Admin.Mobile.ViewModels;
 
 namespace GloboTicket.Admin.Mobile.Views;
 
-public partial class EventDetailPage : ContentPageBase
+public partial class EventOverviewPage : ContentPageBase
 {
-	public EventDetailPage(EventDetailViewModel viewModel)
+	public EventOverviewPage(EventListOverviewViewModel viewModel)
 	{
 		InitializeComponent();
 		this.BindingContext = viewModel;

@@ -4,18 +4,22 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:GloboTicket.Admin.Mobile"
-    xmlns:v="clr-namespace:GloboTicket.Admin.Mobile.Views"
+    xmlns:view="clr-namespace:GloboTicket.Admin.Mobile.Views"
     Shell.FlyoutBehavior="Disabled"
     Title="GloboTicket.Admin.Mobile">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate v:EventDetailPage}"
-        Route="MainPage" />
-
     <!--<ShellContent
         Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />-->
+        ContentTemplate="{DataTemplate local:EventDetailPage}"
+        Route="event" />-->
+
+    <Shell.TitleView>
+        <view:LogoView />
+    </Shell.TitleView>
+    
+    <ShellContent
+        Title="Home"
+        ContentTemplate="{DataTemplate view:EventOverviewPage}"
+        Route="overview" />
 
 </Shell>

@@ -1,134 +1,161 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using GloboTicket.Admin.Mobile.ViewModels;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-using static System.Net.WebRequestMethods;
-//using CommunityToolkit.Maui.Core.Extensions;
-//using CommunityToolkit.Mvvm.ComponentModel;
-//using CommunityToolkit.Mvvm.Input;
-//using CommunityToolkit.Mvvm.Messaging;
-//using GloboTicket.Admin.Mobile.Messages;
-//using GloboTicket.Admin.Mobile.Models;
-//using GloboTicket.Admin.Mobile.Services;
-//using GloboTicket.Admin.Mobile.ViewModels.Base;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Core.Extensions;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using GloboTicket.Admin.Mobile.Messages;
+using GloboTicket.Admin.Mobile.Models;
+using GloboTicket.Admin.Mobile.Services;
+using GloboTicket.Admin.Mobile.ViewModels.Base;
 
 namespace GloboTicket.Admin.Mobile.ViewModels;
 
-//public partial class EventDetailViewModel : ViewModelBase, IQueryAttributable
-//public class EventDetailViewModel : INotifyPropertyChanged
-public class EventDetailViewModel : ObservableObject
+public partial class EventDetailViewModel : ViewModelBase, IQueryAttributable
 {
+    private readonly IEventService _eventService;
+    private readonly INavigationService _navigationService;
+    private readonly IDialogService _dialogService;
+
+    [ObservableProperty]
     private Guid _id;
+
+    [ObservableProperty]
     private string _name = default!;
+
+    [ObservableProperty]
     private double _price;
+
+    [ObservableProperty]
     private string _imageUrl;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CancelEventCommand))]
     private EventStatusEnum _eventStatus;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CancelEventCommand))]
     private DateTime _date = DateTime.Now;
+
+    [ObservableProperty]
     private string _description;
-    private List<string> _artists = new();
+
+    [ObservableProperty]
+    private ObservableCollection<string> _artists = new();
+
+    [ObservableProperty]
     private CategoryViewModel _category = new();
 
-    public Guid Id
-    {
-        get => _id;
-        set => SetProperty<Guid>(ref _id, value);
-    }
-
-    public string Name
-    {
-        get => _name;
-        set => SetProperty<string>(ref _name, value);
-    }
-
-    public double Price
-    {
-        get => _price;
-        set => SetProperty<double>(ref _price, value);
-    }
-
-    public string ImageUrl
-    {
-        get => _imageUrl;
-        set => SetProperty<string>(ref _imageUrl, value);
-    }
-
-    public EventStatusEnum EventStatus
-    {
-        get => _eventStatus;
-        set => SetProperty<EventStatusEnum>(ref _eventStatus, value);
-    }
-
-    public DateTime Date
-    {
-        get => _date;
-        set => SetProperty<DateTime>(ref _date, value);
-    }
-
-    public string Description
-    {
-        get => _description;
-        set => SetProperty<string>(ref _description, value);
-    }
-
-    public List<string> Artists
-    {
-        get => _artists;
-        set => SetProperty<List<string>>(ref _artists, value);
-    }
-
-    public CategoryViewModel Category
-    {
-        get => _category;
-        set => SetProperty<CategoryViewModel>(ref _category, value);
-    }
-
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowThumbnailImage))]
     private bool _showLargerImage;
-
-    public bool ShowLargerImage
-    {
-        get => _showLargerImage;
-        set 
-        {
-            if (SetProperty<bool>(ref _showLargerImage, value))
-                OnPropertyChanged(nameof(ShowThumbnailImage));
-        }
-    }
 
     public bool ShowThumbnailImage => !ShowLargerImage;
 
-    public ICommand CancelEventCommand
+    [RelayCommand(CanExecute = nameof(CanCancelEvent))]
+    private async Task CancelEvent()
     {
-        get;
+        if (await _eventService.UpdateStatus(Id, EventStatusModel.Cancelled))
+        {
+            EventStatus = EventStatusEnum.Cancelled;
+            WeakReferenceMessenger.Default.Send(new StatusChangedMessage(Id, EventStatus));
+        }
     }
-
-    private void CancelEvent() => EventStatus = EventStatusEnum.Cancelled;
 
     private bool CanCancelEvent() => EventStatus != EventStatusEnum.Cancelled && Date.AddHours(-4) > DateTime.Now;
 
-    public EventDetailViewModel()
+    [RelayCommand]
+    private async Task NavigateToEditEvent()
     {
-        CancelEventCommand = new Command(CancelEvent, CanCancelEvent);
+        var detailModel = MapToEventModel(this);
+        await _navigationService.GoToEditEvent(detailModel);
+    }
 
-        Id = Guid.Parse("EE272F8B-6096-4CB6-8625-BB4BB2D89E8B");
-        Name = "John Egberts Live";
-        Price = 65;
-        ImageUrl = "https://lindseybroospluralsight.blob.core.windows.net/globoticket/images/banjo.jpg";
-        EventStatus = EventStatusEnum.OnSale;
-        Date = DateTime.Now.AddMonths(6);
-        Description =
-            "Join John for his farewell tour across 15 continents. John really needs no introduction since he has already mesmerized the world with his banjo.";
-        Artists = new List<string> { "John Egbert", "Jane Egbert" };
+    [RelayCommand]
+    public async Task DeleteEvent()
+    {
+        if (await _dialogService.Ask(
+                "Delete event",
+                "Are you sure you want to delete this event?"))
+        {
+            if (await _eventService.DeleteEvent(Id))
+            {
+                WeakReferenceMessenger.Default.Send(new EventDeletedMessage(Id));
+                await _navigationService.GoToOverview();
+            }
+        }
+    }
+
+    public EventDetailViewModel(
+        IEventService eventService,
+        INavigationService navigationService, IDialogService dialogService)
+    {
+        _eventService = eventService;
+        _navigationService = navigationService;
+        _dialogService = dialogService;
+    }
+
+    public override async Task LoadAsync()
+    {
+        await Loading(
+            async () =>
+            {
+                if (Id != Guid.Empty)
+                {
+                    await GetEvent(Id);
+                }
+            });
+    }
+
+    private async Task GetEvent(Guid id)
+    {
+        var @event = await _eventService.GetEvent(id);
+
+        MapEventData(@event);
+    }
+
+    private void MapEventData(EventModel @event)
+    {
+        Id = @event.Id;
+        Name = @event.Name;
+        Price = @event.Price;
+        ImageUrl = @event.ImageUrl;
+        EventStatus = (EventStatusEnum)@event.Status;
+        Date = @event.Date;
+        Artists = @event.Artists.ToObservableCollection();
+        Description = @event.Description;
         Category = new CategoryViewModel
         {
-            Id = Guid.Parse("B0788D2F-8003-43C1-92A4-EDC76A7C5DDE"),
-            Name = "Concert"
+            Id = @event.Category.Id,
+            Name = @event.Category.Name
         };
     }
 
-    //public event PropertyChangedEventHandler? PropertyChanged;
+    private EventModel MapToEventModel(EventDetailViewModel eventDetailViewModel)
+    {
+        return new EventModel
+        {
+            Id = eventDetailViewModel.Id,
+            Name = eventDetailViewModel.Name ?? string.Empty,
+            Price = eventDetailViewModel.Price,
+            ImageUrl = eventDetailViewModel.ImageUrl,
+            Status = (EventStatusModel)eventDetailViewModel.EventStatus,
+            Date = eventDetailViewModel.Date,
+            Description = eventDetailViewModel.Description ?? string.Empty,
+            Category = new CategoryModel
+            {
+                Id = eventDetailViewModel.Category!.Id,
+                Name = eventDetailViewModel.Category.Name
+            },
+            Artists = eventDetailViewModel.Artists.ToList()
+        };
+    }
 
-    //public void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    //    => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    public async void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        var eventId = query["EventId"].ToString();
+        if (Guid.TryParse(eventId, out var selectedId))
+        {
+            Id = selectedId;
+        }
+    }
 }
