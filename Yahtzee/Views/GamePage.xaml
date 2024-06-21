@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Yahtzee.ViewModels"
+             xmlns:models="clr-namespace:Yahtzee.Models"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Yahtzee.Views.GamePage"
+             Title="">
+    <!--<StackLayout>
+        <Label Text="Welcome to .NET MAUI!"
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" />
+    </StackLayout>-->
+
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior Command="{Binding AppearingCommand}" EventName="Appearing" />
+        <toolkit:EventToCommandBehavior Command="{Binding DisappearingCommand}" EventName="Disappearing" />
+    </ContentPage.Behaviors>
+
+    <Grid Padding="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="4*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" ColumnSpacing="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width=".5*" />
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Row="0" Grid.Column="0" Text="Aces" MaximumHeightRequest="40" 
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[0].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.ACES}"></Button>
+            <Button Grid.Row="1" Grid.Column="0" Text="Twos" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[1].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.TWOS}"></Button>
+            <Button Grid.Row="2" Grid.Column="0" Text="Threes" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[2].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.THREES}"></Button>
+            <Button Grid.Row="3" Grid.Column="0" Text="Fours" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[3].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.FOURS}"></Button>
+            <Button Grid.Row="4" Grid.Column="0" Text="Fives" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[4].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.FIVES}"></Button>
+            <Button Grid.Row="5" Grid.Column="0" Text="Sixes" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[5].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.SIXES}"></Button>
+
+            <Button Grid.Row="6" Grid.Column="0" Text="Upper Score" MaximumHeightRequest="40" BackgroundColor="SeaGreen"></Button>
+            <Button Grid.Row="7" Grid.Column="0" Text="Bonus (>=63)" MaximumHeightRequest="40" BackgroundColor="SeaGreen"></Button>
+            <Button Grid.Row="8" Grid.Column="0" Text="Upper Total" MaximumHeightRequest="40" BackgroundColor="SeaGreen"></Button>
+
+            <Border Grid.Row="0" Grid.Column="1" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[0].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="1" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[1].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="1" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[2].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="1" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[3].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="1" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[4].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="1" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[5].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="1" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[13].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center" BackgroundColor="SeaGreen"></Label>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="1" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[14].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center" BackgroundColor="SeaGreen"></Label>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="1" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[15].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center" BackgroundColor="SeaGreen"></Label>
+            </Border>
+
+            <Border Grid.Row="9" Grid.Column="0" StrokeThickness="2" StrokeShape="RoundRectangle 30,30,30,30"  >
+                <Label Text="{Binding ScoreSheet.CategoryScores[19].Score}" FontSize="35" 
+                       FontAttributes="Bold" 
+                       HorizontalTextAlignment="Center" 
+                       VerticalTextAlignment="Center" 
+                       BackgroundColor="SeaGreen" 
+                       TextColor="Yellow"></Label>
+            </Border>
+
+            <Button Grid.Row="0" Grid.Column="3" Text="3 of a kind" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[6].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.THREE_OF_A_KIND}"></Button>
+            <Button Grid.Row="1" Grid.Column="3" Text="4 of a kind" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[7].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.FOUR_OF_A_KIND}"></Button>
+            <Button Grid.Row="2" Grid.Column="3" Text="Full House" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[8].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.FULLHOUSE}"></Button>
+            <Button Grid.Row="3" Grid.Column="3" Text="Sm. Straight" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[9].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.SMALL_STRAIGHT}"></Button>
+            <Button Grid.Row="4" Grid.Column="3" Text="Lg. Straight" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[10].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.LARGE_STRAIGHT}"></Button>
+            <Button Grid.Row="5" Grid.Column="3" Text="Chance" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[11].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.CHANCE}"></Button>
+            <Button Grid.Row="6" Grid.Column="3" Text="{Binding ScoreSheet.YahtzeeCountLabel}" MaximumHeightRequest="40"
+                    BorderWidth="2"
+                    BorderColor="{Binding ScoreSheet.CategoryScores[12].Border}"
+                    Command="{Binding SelectCategoryCommand}" 
+                    CommandParameter="{x:Static models:CATEGORIES.YAHTZEE}"></Button>
+
+            <Button Grid.Row="7" Grid.Column="3" Text="Lower Score" MaximumHeightRequest="40" BackgroundColor="SeaGreen"></Button>
+            <Button Grid.Row="8" Grid.Column="3" Text="Bonus Yahtzee" MaximumHeightRequest="40" BackgroundColor="SeaGreen"></Button>
+            <Button Grid.Row="9" Grid.Column="3" Text="Lower Total" MaximumHeightRequest="40" BackgroundColor="SeaGreen"></Button>
+
+            <Border Grid.Row="0" Grid.Column="4" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[6].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"></Label>
+            </Border>
+            <Border Grid.Row="1" Grid.Column="4" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[7].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"></Label>
+            </Border>
+            <Border Grid.Row="2" Grid.Column="4" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[8].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"></Label>
+            </Border>
+            <Border Grid.Row="3" Grid.Column="4" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[9].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"></Label>
+            </Border>
+            <Border Grid.Row="4" Grid.Column="4" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[10].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"></Label>
+            </Border>
+            <Border Grid.Row="5" Grid.Column="4" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[11].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"></Label>
+            </Border>
+            <Border Grid.Row="6" Grid.Column="4" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[12].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center"></Label>
+            </Border>
+            <Border Grid.Row="7" Grid.Column="4" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[16].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center" BackgroundColor="SeaGreen"></Label>
+            </Border>
+            <Border Grid.Row="8" Grid.Column="4" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[17].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center" BackgroundColor="SeaGreen"></Label>
+            </Border>
+            <Border Grid.Row="9" Grid.Column="4" StrokeThickness="2" StrokeShape="RoundRectangle" MaximumHeightRequest="40" >
+                <Label Text="{Binding ScoreSheet.CategoryScores[18].Score}" Padding="5" HorizontalTextAlignment="End" VerticalTextAlignment="Center" BackgroundColor="SeaGreen"></Label>
+            </Border>
+
+        </Grid>
+
+        <VerticalStackLayout Grid.Row="1">
+            <HorizontalStackLayout Spacing="10">
+                <Frame WidthRequest="70" Padding="0" BackgroundColor="{Binding DiceSet.Dices[0].BackgroundColor}">
+                    <Image Margin="4, 4, 2, 2" Source="{Binding DiceSet.Dices[0].Image}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DiceSet.HoldDiceCommand}" CommandParameter="{x:Static models:DICE_POSITION.FIRST}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+                <Frame WidthRequest="70" Padding="0" BackgroundColor="{Binding DiceSet.Dices[1].BackgroundColor}">
+                    <Image Margin="4, 4, 2, 2" Source="{Binding DiceSet.Dices[1].Image}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DiceSet.HoldDiceCommand}" CommandParameter="{x:Static models:DICE_POSITION.SECOND}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+                <Frame WidthRequest="70" Padding="0" BackgroundColor="{Binding DiceSet.Dices[2].BackgroundColor}">
+                    <Image Margin="4, 4, 2, 2" Source="{Binding DiceSet.Dices[2].Image}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DiceSet.HoldDiceCommand}" CommandParameter="{x:Static models:DICE_POSITION.THIRD}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+                <Frame WidthRequest="70" Padding="0" BackgroundColor="{Binding DiceSet.Dices[3].BackgroundColor}">
+                    <Image Margin="4, 4, 2, 2" Source="{Binding DiceSet.Dices[3].Image}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DiceSet.HoldDiceCommand}" CommandParameter="{x:Static models:DICE_POSITION.FOURTH}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+                <Frame WidthRequest="70" Padding="0" BackgroundColor="{Binding DiceSet.Dices[4].BackgroundColor}">
+                    <Image Margin="4, 4, 2, 2" Source="{Binding DiceSet.Dices[4].Image}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding DiceSet.HoldDiceCommand}" CommandParameter="{x:Static models:DICE_POSITION.FIFTH}" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+            </HorizontalStackLayout>
+            <Grid
+                RowDefinitions="50"
+                Grid.ColumnDefinitions="50, *, 100, 40">
+                <Frame Grid.Row="0" Grid.Column="0" Padding="5" WidthRequest="45" HeightRequest="45" BackgroundColor="orange" >
+                    <Image Source="back.png">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding BackToMainCommand}"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+                <Button 
+                    Grid.Row="0" 
+                    Grid.Column="2" 
+                    Text="Roll" 
+                    HeightRequest="40" 
+                    WidthRequest="100" 
+                    Command="{Binding RollDicesCommand}"
+                />
+                <CollectionView Grid.Row="0" Grid.Column="3" ItemsSource="{Binding RollCountImages}" Margin="0, 2, 0, 0">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Image Margin="0, 2, 0, 0" WidthRequest="25" Source="{Binding .}"></Image>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>
