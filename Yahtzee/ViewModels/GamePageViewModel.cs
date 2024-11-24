@@ -12,7 +12,7 @@ public partial class GamePageViewModel : BaseViewModel
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RollDicesCommand))]
-    private CATEGORIES _selectedCategory = CATEGORIES.NONE;
+    private CATEGORIES _previousCategory = CATEGORIES.NONE;
 
     [ObservableProperty]
     public DiceSet _diceSet;
@@ -43,9 +43,9 @@ public partial class GamePageViewModel : BaseViewModel
     public void RollDices()
     {
         bool lastScore = false;
-        if (SelectedCategory != CATEGORIES.NONE)
+        if (PreviousCategory != CATEGORIES.NONE)
         {
-            lastScore = ScoreSheet.AssignCategoryScore(SelectedCategory);
+            lastScore = ScoreSheet.AssignCategoryScore(PreviousCategory);
             ResetDices();            
         }
 
@@ -59,15 +59,15 @@ public partial class GamePageViewModel : BaseViewModel
 
     private bool CanRollDice()
     {
-        return RollCount < 3 || SelectedCategory != CATEGORIES.NONE;
+        return RollCount < 3 || PreviousCategory != CATEGORIES.NONE;
     }
 
     [RelayCommand(CanExecute = nameof(CanSelectCategory))]
-    public void SelectCategory(CATEGORIES category)
+    public void SelectCategory(CATEGORIES selectedCategory)
     {
-        var score = SelectedCategory != category ? DiceSet.GetScore(category) : 0;
-        SelectedCategory = SelectedCategory != category ? category : CATEGORIES.NONE;
-        ScoreSheet.SelectCategory(category, score);
+        var score = PreviousCategory != selectedCategory ? DiceSet.GetScore(selectedCategory) : 0;
+        ScoreSheet.SelectCategory(selectedCategory, PreviousCategory, score);
+        PreviousCategory = selectedCategory; // != PreviousCategory ? selectedCategory : CATEGORIES.NONE;
     }
 
     private bool CanSelectCategory(CATEGORIES category) 
@@ -121,7 +121,7 @@ public partial class GamePageViewModel : BaseViewModel
         RollCount = 0;
         for (int i = 0; i < 3; i++)
             RollCountImages[i] = CONSTANTS.GREEN_LED;
-        SelectedCategory = CATEGORIES.NONE;
+        PreviousCategory = CATEGORIES.NONE;
         DiceSet.Reset();
     }
 }

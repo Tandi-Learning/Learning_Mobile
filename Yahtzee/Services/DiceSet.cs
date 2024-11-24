@@ -36,8 +36,8 @@ public partial class DiceSet : ObservableObject, IDiceSet
             => UpperCategoryScore(category),
             CATEGORIES.THREE_OF_A_KIND => SameOfAKindScore(3),
             CATEGORIES.FOUR_OF_A_KIND => SameOfAKindScore(4),
-            CATEGORIES.SMALL_STRAIGHT => StraightScore(STRAIGHT.SMALL),
-            CATEGORIES.LARGE_STRAIGHT => StraightScore(STRAIGHT.LARGE),
+            CATEGORIES.SMALL_STRAIGHT or 
+            CATEGORIES.LARGE_STRAIGHT => StraightScore(category),
             CATEGORIES.FULLHOUSE => FullhouseScore(),
             CATEGORIES.CHANCE => ChanceScore(),
             CATEGORIES.YAHTZEE => YahtzeeScore(),
@@ -68,21 +68,25 @@ public partial class DiceSet : ObservableObject, IDiceSet
             return 0;
     }
 
-    private int StraightScore(STRAIGHT straight)
+    private int StraightScore(CATEGORIES category)
     {
-        int compareSeq = straight == STRAIGHT.SMALL ? 4 : 5;
-        int score = straight == STRAIGHT.SMALL ? 30 : 40;
+        int compareSeq = category == CATEGORIES.SMALL_STRAIGHT ? 4 : 5;
+        int score = category == CATEGORIES.SMALL_STRAIGHT ? 30 : 40;
         int seq = 0;
         int currentValue = 0;
         List<int> values = Dices.Select(d => d.Value).Order().Distinct().ToList();
 
+        bool isStraight = false;
         foreach (var value in values)
         {
-            seq = (currentValue == 0 || currentValue == value - 1) ? seq + 1 : 0;            
+            seq = (currentValue == 0 || currentValue == value - 1) ? seq + 1 : 0;
+            isStraight = (category == CATEGORIES.SMALL_STRAIGHT && seq == 4) || 
+                (category == CATEGORIES.LARGE_STRAIGHT && seq == 5);
+            if (isStraight) break;
             currentValue = value;
         }
 
-        return seq >= compareSeq ? score : 0;
+        return isStraight ? score : 0;
     }
 
     private int FullhouseScore() 

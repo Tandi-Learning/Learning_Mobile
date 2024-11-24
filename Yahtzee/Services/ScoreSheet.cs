@@ -69,18 +69,16 @@ public partial class ScoreSheet : ObservableObject, IScoreSheet
         }
     }
 
-    public void SelectCategory(CATEGORIES selectedCategory, int categoryScore)
-    {       
-        foreach (var category in CategoryScores)
+    public void SelectCategory(CATEGORIES selectedCategory, CATEGORIES previousCategory, int categoryScore)
+    {
+        CategoryScores[(int)selectedCategory].Border = CategoryScores[(int)selectedCategory].Border == "Red" ? "Transparent" : "Red";
+        CategoryScores[(int)selectedCategory].Score = categoryScore;
+        CategoryScores[(int)selectedCategory].Selected = true;
+        if (selectedCategory != previousCategory)
         {
-            if ((!category.Assigned || selectedCategory == CATEGORIES.YAHTZEE) && Selectable(category.Category))
-            {
-                int unselectedScore = selectedCategory == CATEGORIES.YAHTZEE && category.Assigned ? 50 : 0;
-                category.Selected = category.Category != selectedCategory ? false : !category.Selected;
-                category.Border = category.Selected ? "Red" : "Transparent";
-                category.Score = category.Selected ? categoryScore : unselectedScore;
-                ;
-            }
+            CategoryScores[(int)previousCategory].Border = "Transparent";
+            CategoryScores[(int)previousCategory].Score = 0;
+            CategoryScores[(int)previousCategory].Selected = false;
         }
     }
 

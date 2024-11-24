@@ -8,7 +8,6 @@ namespace Yahtzee.Models;
 
 public enum DICE_POSITION { FIRST = 0, SECOND = 1, THIRD = 2, FOURTH = 3, FIFTH = 4 }
 public enum ROLL_COUNT { FIRST = 0, SECOND = 1, THIRD = 2 }
-public enum STRAIGHT { SMALL, LARGE }
 
 public enum CATEGORIES
 {
