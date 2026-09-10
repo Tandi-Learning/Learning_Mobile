@@ -6,38 +6,53 @@ using System.Threading.Tasks;
 
 namespace Yahtzee.Models;
 
-public enum DICE_POSITION { FIRST = 0, SECOND = 1, THIRD = 2, FOURTH = 3, FIFTH = 4 }
+public enum DICE_POSITION { 
+    NONE,
+    FIRST = 0, 
+    SECOND = 1, 
+    THIRD = 2, 
+    FOURTH = 3, 
+    FIFTH = 4 
+}
 public enum ROLL_COUNT { FIRST = 0, SECOND = 1, THIRD = 2 }
+public enum DICE_STATE
+{
+    OPEN,
+    HOLD
+}
 
 public enum CATEGORIES
 {
-    ACES,
-    TWOS,
-    THREES,
-    FOURS,
-    FIVES,
-    SIXES,
-    THREE_OF_A_KIND,
-    FOUR_OF_A_KIND,
-    FULLHOUSE,
-    SMALL_STRAIGHT,
-    LARGE_STRAIGHT,
-    CHANCE,
-    YAHTZEE,
-    UPPER_SCORE,
-    UPPER_BONUS,
-    UPPER_TOTAL,
-    LOWER_SCORE,
-    YAHTZEE_BONUS,
-    LOWER_TOTAL,
-    GRAND_TOTAL,
-    NONE
+    NONE = -1,
+    ACES = 0,
+    TWOS = 1,
+    THREES = 2,
+    FOURS = 3,
+    FIVES = 4,
+    SIXES = 5,
+    THREE_OF_A_KIND = 6,
+    FOUR_OF_A_KIND = 7,
+    FULLHOUSE = 8,
+    SMALL_STRAIGHT = 9,
+    LARGE_STRAIGHT = 10,
+    CHANCE = 11,
+    YAHTZEE = 12,
+    UPPER_SCORE = 13,
+    UPPER_BONUS = 14,
+    UPPER_TOTAL = 15,
+    LOWER_SCORE = 16,
+    YAHTZEE_BONUS = 17,
+    LOWER_TOTAL = 18,
+    GRAND_TOTAL = 19
 }
 
 internal static class CONSTANTS
 {
-    public static string GREEN_LED = "green_led.png";
-    public static string RED_LED = "red_led.png";
+    public static string ON_IMAGE = "on.png";
+    public static string OFF_IMAGE = "off.png";
+
+    public static string GREEN_LED_IMAGE = "green_led.png";
+    public static string RED_LED_IMAGE = "red_led.png";
 
     public static string DICE_BLANK_IMAGE = "dice_blank.png";
     public static string DICE_1_IMAGE = "dice_1.png";
@@ -47,6 +62,6 @@ internal static class CONSTANTS
     public static string DICE_5_IMAGE = "dice_5.png";
     public static string DICE_6_IMAGE = "dice_6.png";
 
-    public static string HOLD_BGBOLOR = "Red";
-    public static string NORMAL_BGCOLOR = "Transparent";
+    public static string RED_BGCOLOR = "Red";
+    public static string TRANSPARENT_BGCOLOR = "Transparent";
 }

@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using Yahtzee.Models;
 using Yahtzee.Services;
 using Yahtzee.ViewModels;
 using Yahtzee.Views;
 using CommunityToolkit.Maui;
 using Yahtzee.Data;
+using Yahtzee.Controls;
 
 namespace Yahtzee;
 
@@ -59,6 +61,7 @@ public static class MauiProgram
     {
         builder.Services.AddTransient<MainPage>();
         builder.Services.AddTransient<GamePage>();
+        builder.Services.AddTransient<DicePanelView>(); 
         return builder;
     }
 }

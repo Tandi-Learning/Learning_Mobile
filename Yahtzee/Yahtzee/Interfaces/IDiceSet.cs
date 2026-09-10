@@ -1,11 +1,12 @@
 ﻿using Yahtzee.Models;
 
-namespace Yahtzee.Services;
+namespace Yahtzee.Interfaces;
 
 public interface IDiceSet
 {
     void Reset();
     int GetScore(CATEGORIES category);
     bool IsYahtzee();
-    void RollDice();
+    void RollDices();
+    void ToggleDice(int position);
 }

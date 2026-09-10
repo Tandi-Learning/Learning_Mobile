@@ -2,17 +2,14 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Yahtzee.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Yahtzee.Views.MainPage"
              Title="">
 
     <VerticalStackLayout
-        Margin="30"
-        Padding="10,0"
-        Spacing="50">
+        toolkit:StateContainer.CurrentState="{Binding CurrentState}">
         <Image
-            Source="yahtzee.png"
-            HeightRequest="185"
-            Aspect="AspectFit"
+            Source="yahtzee.png"            
             SemanticProperties.Description="Start the game and roll the dices" />
 
         <VerticalStackLayout
@@ -29,8 +26,8 @@
                 Text="Resume" 
                 SemanticProperties.Hint="Resume Previous Game"
                 Command="{Binding ResumeGameCommand}"
+                IsEnabled="{Binding GameInProgress}"
                 HorizontalOptions="Fill" />
-                <!--IsEnabled="{Binding GameInProgress}"-->
             <Button
                 x:Name="ViewScores"
                 Text="View Scores" 

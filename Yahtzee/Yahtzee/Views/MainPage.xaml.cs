@@ -1,4 +1,5 @@
-﻿using Yahtzee.ViewModels;
+﻿using CommunityToolkit.Maui.Layouts;
+using Yahtzee.ViewModels;
 
 namespace Yahtzee.Views;
 
@@ -8,5 +9,10 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         this.BindingContext = mainPageViewModel;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();        
     }
 }

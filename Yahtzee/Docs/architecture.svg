@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <style>
+	.box { fill:#FFFFFF; stroke:#2b2b2b; stroke-width:2; rx:8; }
+	.title { font: bold 16px sans-serif; fill:#111111 }
+	.label { font: 14px sans-serif; fill:#111111 }
+	.small { font: 12px sans-serif; fill:#111111 }
+	.arrow { stroke:#2b2b2b; stroke-width:2; fill:none; marker-end:url(#arrowhead);} 
+  </style>
+
+  <defs>
+	<marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+	  <polygon points="0 0, 10 3.5, 0 7" fill="#2b2b2b" />
+	</marker>
+  </defs>
+
+  <!-- Top: App + AppShell -->
+  <rect x="40" y="20" width="520" height="80" class="box" />
+  <text x="60" y="50" class="title">App (App.xaml / App.xaml.cs)</text>
+  <text x="60" y="74" class="small">Initializes MAUI, registers services, sets AppShell</text>
+
+  <rect x="640" y="20" width="520" height="80" class="box" />
+  <text x="660" y="50" class="title">AppShell (AppShell.xaml)</text>
+  <text x="660" y="74" class="small">Routing / top-level navigation</text>
+
+  <!-- Middle left: Views -->
+  <rect x="40" y="140" width="360" height="260" class="box" />
+  <text x="60" y="170" class="title">Views</text>
+  <text x="60" y="196" class="label">MainPage</text>
+  <text x="60" y="218" class="label">GamePage</text>
+  <text x="60" y="240" class="label">ScoresPage</text>
+  <text x="60" y="262" class="small">BasePage (common logic)</text>
+
+  <!-- Middle center: Controls -->
+  <rect x="420" y="140" width="360" height="180" class="box" />
+  <text x="440" y="170" class="title">Controls</text>
+  <text x="440" y="196" class="label">DicePanelView</text>
+  <text x="440" y="218" class="label">ScoreBoardPanelView</text>
+
+  <!-- Middle right: ViewModels -->
+  <rect x="800" y="140" width="360" height="260" class="box" />
+  <text x="820" y="170" class="title">ViewModels</text>
+  <text x="820" y="196" class="label">BaseViewModel</text>
+  <text x="820" y="218" class="label">MainPageViewModel</text>
+  <text x="820" y="240" class="label">GamePageViewModel</text>
+  <text x="820" y="262" class="label">DicePanelViewModel</text>
+  <text x="820" y="284" class="label">ScoreBoardPanelViewModel</text>
+
+  <!-- Bottom left: Models -->
+  <rect x="40" y="430" width="520" height="220" class="box" />
+  <text x="60" y="460" class="title">Models / Domain</text>
+  <text x="60" y="486" class="label">Dice, DiceSet, DiceXXX</text>
+  <text x="60" y="506" class="label">ScoreBoard, ScoreGroup, CategoryScore</text>
+  <text x="60" y="526" class="label">RollState, RollDicePayload</text>
+  <text x="60" y="546" class="small">ObservableDictionary, constants</text>
+
+  <!-- Bottom center: Services & Data -->
+  <rect x="600" y="430" width="560" height="220" class="box" />
+  <text x="620" y="460" class="title">Services & Data</text>
+  <text x="620" y="486" class="label">INavigation (Navigation.cs)</text>
+  <text x="620" y="506" class="label">IScoreSheet / ScoreSheet (scoring)</text>
+  <text x="620" y="526" class="label">IHighScores / HighScores (persistence)</text>
+  <text x="620" y="546" class="label">YahtzeeDatabase (storage)</text>
+
+  <!-- Messaging -->
+  <rect x="40" y="680" width="520" height="90" class="box" />
+  <text x="60" y="710" class="title">Messaging</text>
+  <text x="60" y="736" class="small">DiceRollMessage, CategorySelectMessage (pub/sub)</text>
+
+  <!-- Arrows: App -> AppShell -->
+  <path d="M560 60 L640 60" class="arrow" />
+
+  <!-- Arrows: AppShell -> Views (routing) -->
+  <path d="M900 100 L900 140" class="arrow" />
+  <path d="M900 140 L420 140" class="arrow" />
+
+  <!-- Arrows: Views -> Controls -->
+  <path d="M400 220 L420 220" class="arrow" />
+  <path d="M400 240 L420 240" class="arrow" />
+
+  <!-- Arrows: Views -> ViewModels (binding) -->
+  <path d="M400 260 L800 260" class="arrow" />
+  <text x="560" y="250" class="small">binds to</text>
+
+  <!-- Arrows: Controls -> ViewModels -->
+  <path d="M620 220 L800 220" class="arrow" />
+  <text x="700" y="210" class="small">control VM binds</text>
+
+  <!-- Arrows: ViewModels -> Services & Data -->
+  <path d="M980 360 L980 430" class="arrow" />
+  <path d="M900 430 L760 430" class="arrow" />
+  <text x="900" y="400" class="small">calls / uses</text>
+
+  <!-- Arrows: ViewModels -> Models -->
+  <path d="M820 400 L420 430" class="arrow" />
+  <text x="620" y="390" class="small">manipulates</text>
+
+  <!-- Arrows: ViewModels -> Messaging -->
+  <path d="M820 420 L310 680" class="arrow" />
+  <text x="540" y="580" class="small">publishes / subscribes</text>
+
+  <!-- Legend -->
+  <rect x="820" y="680" width="340" height="90" class="box" />
+  <text x="840" y="710" class="title">Legend</text>
+  <text x="840" y="736" class="small">Solid arrows = call / data-flow / binding</text>
+  <text x="840" y="756" class="small">Boxes = logical components / files</text>
+
+  <!-- Footer -->
+  <text x="40" y="860" class="small">Generated architecture diagram for Yahtzee (.NET MAUI)</text>
+</svg>

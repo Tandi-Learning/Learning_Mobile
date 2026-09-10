@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Yahtzee.Models"
+             xmlns:viewmodels="clr-namespace:Yahtzee.ViewModels"
+             x:Class="Yahtzee.Controls.DicePanelView">
+
+    <VerticalStackLayout>
+        <HorizontalStackLayout Spacing="10">
+            <VerticalStackLayout WidthRequest="65">
+                <Image Margin="2, 2, 2, 0" Source="{Binding Dices[0].Image}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleDiceCommand}" CommandParameter="{x:Static models:DICE_POSITION.FIRST}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Border>
+                    <Label IsVisible="{Binding Dices[0].Hold}" Text="HOLD" HorizontalOptions="Center"></Label>
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout WidthRequest="65">
+                <Image Margin="2, 2, 2, 0" Source="{Binding Dices[1].Image}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleDiceCommand}" CommandParameter="{x:Static models:DICE_POSITION.SECOND}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Border>
+                    <Label IsVisible="{Binding Dices[1].Hold}" Text="HOLD" HorizontalOptions="Center"></Label>
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout WidthRequest="65">
+                <Image Margin="2, 2, 2, 0" Source="{Binding Dices[2].Image}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleDiceCommand}" CommandParameter="{x:Static models:DICE_POSITION.THIRD}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Border>
+                    <Label IsVisible="{Binding Dices[2].Hold}" Text="HOLD" HorizontalOptions="Center"></Label>
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout WidthRequest="65">
+                <Image Margin="2, 2, 2, 0" Source="{Binding Dices[3].Image}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleDiceCommand}" CommandParameter="{x:Static models:DICE_POSITION.FOURTH}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Border>
+                    <Label IsVisible="{Binding Dices[3].Hold}" Text="HOLD" HorizontalOptions="Center"></Label>
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout WidthRequest="65">
+                <Image Margin="2, 2, 2, 0" Source="{Binding Dices[4].Image}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleDiceCommand}" CommandParameter="{x:Static models:DICE_POSITION.FIFTH}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Border>
+                    <Label IsVisible="{Binding Dices[4].Hold}" Text="HOLD" HorizontalOptions="Center"></Label>
+                </Border>
+            </VerticalStackLayout>
+        </HorizontalStackLayout>
+        <Grid
+        RowDefinitions="40"
+        Grid.ColumnDefinitions="*, 120, *">
+            <Button 
+                Grid.Row="0" 
+                Grid.Column="1" 
+                Text="Roll" 
+                MaximumHeightRequest="40"
+                MaximumWidthRequest="100" 
+                Command="{Binding RollDicesCommand}"
+            />
+            <CollectionView Grid.Row="0" Grid.Column="2" ItemsSource="{Binding CountImages}" >
+                <CollectionView.ItemsLayout>
+                    <!-- Horizontal list with spacing of 10 units -->
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="5" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Image WidthRequest="25" Source="{Binding .}"></Image>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </VerticalStackLayout>
+</ContentView>

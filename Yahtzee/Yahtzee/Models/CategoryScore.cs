@@ -6,14 +6,19 @@ public partial class CategoryScore : ObservableObject
 { 
     [ObservableProperty]
     public CATEGORIES _category;
+
     [ObservableProperty]
     public int _score = 0;
+
     [ObservableProperty]
     public bool _assigned = false;
+
     [ObservableProperty]
     public bool _selected = false;
+
     [ObservableProperty]
     public bool _show = true;
+
     [ObservableProperty]
     public string _border = "Transparent";
 
@@ -37,5 +42,12 @@ public partial class CategoryScore : ObservableObject
             CATEGORIES.YAHTZEE => false,
             _ => true
         };
+    }
+
+    public void AssignScore(int score)
+    {
+        Score = score;
+        Assigned = true;
+        //Border = "Transparent";
     }
 }

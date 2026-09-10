@@ -18,16 +18,18 @@ public class HighScores : IHighScores
 
     public async Task<List<HighScore>> GetHighScoresAsync()
     {
-        return await database.GetHighScoresAsync();
+        //return await database.GetHighScoresAsync();
+        return null;
     }
 
     public async Task<int> AddHighScoreAsync(HighScore highScore)
     {
-        return await database.AddHighScoreAsync(highScore);
+        //return await database.AddHighScoreAsync(highScore);
+        return 0;
     }
 
     public async Task ResetHighScoresAsync()
     {
-        await database.ResetHighScoresAsync();
+        //await database.ResetHighScoresAsync();
     }
 }
