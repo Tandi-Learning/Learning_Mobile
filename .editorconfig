@@ -1,0 +1,37 @@
+root = true
+
+[*.cs]
+# Use file-scoped namespaces if you prefer
+dotnet_style_namespace_match_folder = true:suggestion
+
+# Enable StyleCop rule SA1402: file may only contain a single type
+dotnet_diagnostic.SA1402.severity = error
+
+# Treat analyzer diagnostics as errors by default to enforce rules at build time
+dotnet_analyzer_diagnostic.severity = warning
+
+# Require explicit type declarations instead of 'var'
+# Set the three var-style rules to false to prefer explicit types and make them errors.
+csharp_style_var_for_built_in_types = false:error
+csharp_style_var_when_type_is_apparent = false:error
+csharp_style_var_elsewhere = false:error
+
+# Also ensure the compiler analyzer reports the IDE0008 diagnostic as an error when implicit 'var' is used
+dotnet_diagnostic.IDE0008.severity = error
+
+#############
+# Exceptions
+#############
+# Allow tests to use 'var' by making a lower-priority override for test projects
+[**/Tests/*.cs]
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_when_type_is_apparent = false:warning
+csharp_style_var_elsewhere = false:warning
+dotnet_diagnostic.IDE0008.severity = warning
+
+# Prefer expression-bodied members when the member has a single-line body
+dotnet_style_prefer_expression_bodied_methods = when_on_single_line:suggestion
+dotnet_style_prefer_expression_bodied_constructors = when_on_single_line:suggestion
+dotnet_style_prefer_expression_bodied_properties = when_on_single_line:suggestion
+dotnet_style_prefer_expression_bodied_indexers = when_on_single_line:suggestion
+dotnet_style_prefer_expression_bodied_accessors = when_on_single_line:suggestion
