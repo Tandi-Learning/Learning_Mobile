@@ -24,13 +24,9 @@ namespace Yahtzee.Data
                 Constants.DatabasePath = databasePath!;
             }
 
-            if (string.IsNullOrEmpty(Constants.DatabasePath))
-            {
-                string folder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                Constants.DatabasePath = Path.Combine(folder, Constants.DatabaseFilename);
-            }
-
-            _database = new SQLiteAsyncConnection(Constants.DatabasePath);
+            _database = new SQLiteAsyncConnection(
+                Constants.DatabaseFilePath,
+                Constants.Flags);
         }
 
         public static SQLiteAsyncConnection GetConnection()

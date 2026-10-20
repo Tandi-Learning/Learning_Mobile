@@ -39,6 +39,8 @@ namespace Yahtzee.PageModels
         [ObservableProperty]
         private Project? selectedProject;
 
+
+
         public bool HasCompletedTasks
             => Tasks?.Any(t => t.IsCompleted) ?? false;
 
@@ -115,6 +117,35 @@ namespace Yahtzee.PageModels
             {
                 IsRefreshing = false;
             }
+        }
+
+        [RelayCommand]
+        private static void NewGame()
+        {
+
+        }
+
+        [RelayCommand(CanExecute = nameof(CanResumeGame))]
+        private void ResumeGame()
+        {
+
+        }
+
+        [RelayCommand]
+        private static void ScoreHistory()
+        {
+
+        }
+
+        [RelayCommand]
+        private static void Exit()
+        {
+
+        }
+
+        private static bool CanResumeGame()
+        {
+            return false;
         }
 
         [RelayCommand]

@@ -16,6 +16,8 @@ public static class Constants
 
     public const string DatabaseFilename = "yahtzee.db3";
 
+    public static string DatabaseFilePath => Path.Combine(FileSystem.AppDataDirectory, DatabaseFilename);
+
     public const SQLite.SQLiteOpenFlags Flags =
         // open the database in read/write mode
         SQLite.SQLiteOpenFlags.ReadWrite |
@@ -24,5 +26,5 @@ public static class Constants
         // enable multi-threaded database access
         SQLite.SQLiteOpenFlags.SharedCache;
 
-    public static string DatabasePath { get; set; } = $"Data Source={Path.Combine(FileSystem.AppDataDirectory, DatabaseFilename)}";
+    public static string DatabasePath { get; set; } = $"Data Source={DatabaseFilePath}";
 }

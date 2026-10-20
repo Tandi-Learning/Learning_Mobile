@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Hosting;
+using Yahtzee.Data;
 using Yahtzee.Data.Repositories;
 
 namespace Yahtzee
@@ -48,6 +50,7 @@ namespace Yahtzee
             builder.Services.AddSingleton<TaskRepository>();
             builder.Services.AddSingleton<CategoryRepository>();
             builder.Services.AddSingleton<TagRepository>();
+            builder.Services.AddSingleton<DatabaseInitializationService>();
             builder.Services.AddSingleton<SeedDataService>();
             builder.Services.AddSingleton<ModalErrorHandler>();
             builder.Services.AddSingleton<MainPageModel>();
@@ -57,7 +60,13 @@ namespace Yahtzee
             builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
             builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
 
-            return builder.Build();
+            MauiApp app = builder.Build();
+            DatabaseInitializationService databaseInitializationService =
+                app.Services.GetRequiredService<DatabaseInitializationService>();
+
+            databaseInitializationService.InitializeAsync().GetAwaiter().GetResult();
+
+            return app;
         }
     }
 }

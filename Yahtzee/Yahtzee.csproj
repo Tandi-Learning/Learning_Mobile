@@ -58,6 +58,7 @@
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
+		<MauiImage Include="Resources\Splash\yahtzee_logo.svg" />
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
