@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Yahtzee.Models"
+             xmlns:pageModels="clr-namespace:Yahtzee.PageModels"
+             x:Class="Yahtzee.Pages.GamePage"
+             x:DataType="pageModels:GamePageModel"
+             Title="Game">
+    <ContentPage.Resources>
+        <!-- One row of the scorecard, shared by both columns. -->
+        <DataTemplate x:Key="ScoreRowTemplate"
+                      x:DataType="models:ScoreCategory">
+            <Grid ColumnDefinitions="*,Auto"
+                  Padding="14,10">
+                <Label Grid.Column="0"
+                       Text="{Binding Name}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding IsDerived}"
+                                     Value="True">
+                            <Setter Property="FontAttributes" Value="Bold" />
+                            <Setter Property="FontSize" Value="15" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+                <Label Grid.Column="1"
+                       Text="{Binding DisplayScore}"
+                       HorizontalOptions="End">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding IsDerived}"
+                                     Value="True">
+                            <Setter Property="FontAttributes" Value="Bold" />
+                            <Setter Property="FontSize" Value="15" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </Grid>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+
+    <VerticalStackLayout Padding="{StaticResource LayoutPadding}" Spacing="18">
+        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding Dice}"
+                                           Spacing="8"
+                                           HorizontalOptions="Center">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate x:DataType="models:Die">
+                    <Border WidthRequest="56"
+                                        HeightRequest="72"
+                                        Padding="0"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray800}}"
+                                        Stroke="{StaticResource Gray300}"
+                                        StrokeShape="RoundRectangle 12"
+                                        StrokeThickness="1">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:GamePageModel}}, Path=ToggleHoldCommand}"
+                                                              CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                                     Binding="{Binding IsHeld}"
+                                                     Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                <Setter Property="StrokeThickness" Value="3" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Label Text="{Binding Glyph}"
+                                           FontSize="46"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                    </Border>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </HorizontalStackLayout>
+
+        <Grid ColumnDefinitions="*,*"
+                  ColumnSpacing="12">
+            <Button Grid.Column="0"
+                        Text="Roll Dice"
+                        Command="{Binding RollCommand}"
+                        FontAttributes="Bold"
+                        HeightRequest="48" />
+            <Button Grid.Column="1"
+                        Text="End Turn"
+                        Command="{Binding EndTurnCommand}"
+                        HeightRequest="48" />
+        </Grid>
+
+        <Border Stroke="{StaticResource Gray300}"
+                    StrokeShape="RoundRectangle 12"
+                    Padding="0">
+            <VerticalStackLayout>
+                <!-- Upper section on the left, combinations on the right. -->
+                <Grid ColumnDefinitions="*,1,*">
+                    <VerticalStackLayout Grid.Column="0"
+                                             BindableLayout.ItemsSource="{Binding UpperSection}"
+                                             BindableLayout.ItemTemplate="{StaticResource ScoreRowTemplate}" />
+                    <BoxView Grid.Column="1"
+                                 Color="{StaticResource Gray300}" />
+                    <VerticalStackLayout Grid.Column="2"
+                                             BindableLayout.ItemsSource="{Binding LowerSection}"
+                                             BindableLayout.ItemTemplate="{StaticResource ScoreRowTemplate}" />
+                </Grid>
+
+                <!-- The grand total spans both columns and closes the scoreboard. -->
+                <BoxView HeightRequest="1"
+                             Color="{StaticResource Gray300}" />
+                <Grid ColumnDefinitions="*,Auto"
+                          Padding="14,12">
+                    <Label Grid.Column="0"
+                               Text="{Binding GrandTotal.Name}"
+                               FontAttributes="Bold"
+                               FontSize="14" />
+                    <Label Grid.Column="1"
+                               Text="{Binding GrandTotal.DisplayScore}"
+                               FontAttributes="Bold"
+                               FontSize="14"
+                               HorizontalOptions="End" />
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+    </VerticalStackLayout>
+</ContentPage>

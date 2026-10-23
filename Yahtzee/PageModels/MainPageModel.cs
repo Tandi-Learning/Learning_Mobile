@@ -12,6 +12,7 @@ namespace Yahtzee.PageModels
         private readonly ProjectRepository _projectRepository;
         private readonly TaskRepository _taskRepository;
         private readonly CategoryRepository _categoryRepository;
+        private readonly GameStateRepository _gameStateRepository;
         private readonly ModalErrorHandler _errorHandler;
         private readonly SeedDataService _seedDataService;
 
@@ -39,17 +40,21 @@ namespace Yahtzee.PageModels
         [ObservableProperty]
         private Project? selectedProject;
 
-
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(ResumeGameCommand))]
+        private bool _hasResumableGame;
 
         public bool HasCompletedTasks
             => Tasks?.Any(t => t.IsCompleted) ?? false;
 
         public MainPageModel(SeedDataService seedDataService, ProjectRepository projectRepository,
-            TaskRepository taskRepository, CategoryRepository categoryRepository, ModalErrorHandler errorHandler)
+            TaskRepository taskRepository, CategoryRepository categoryRepository,
+            GameStateRepository gameStateRepository, ModalErrorHandler errorHandler)
         {
             _projectRepository = projectRepository;
             _taskRepository = taskRepository;
             _categoryRepository = categoryRepository;
+            _gameStateRepository = gameStateRepository;
             _errorHandler = errorHandler;
             _seedDataService = seedDataService;
         }
@@ -120,15 +125,16 @@ namespace Yahtzee.PageModels
         }
 
         [RelayCommand]
-        private static void NewGame()
+        private async Task NewGame()
         {
-
+            await Shell.Current.GoToAsync("game");
         }
 
         [RelayCommand(CanExecute = nameof(CanResumeGame))]
-        private void ResumeGame()
+        private async Task ResumeGame()
         {
-
+            HasResumableGame = false;
+            await _gameStateRepository.SetInProgressAsync(HasResumableGame);
         }
 
         [RelayCommand]
@@ -143,9 +149,9 @@ namespace Yahtzee.PageModels
 
         }
 
-        private static bool CanResumeGame()
+        private bool CanResumeGame()
         {
-            return false;
+            return HasResumableGame;
         }
 
         [RelayCommand]
@@ -170,6 +176,8 @@ namespace Yahtzee.PageModels
             {
                 await Refresh();
             }
+
+            HasResumableGame = await _gameStateRepository.IsGameInProgressAsync();
         }
 
         [RelayCommand]
