@@ -69,5 +69,7 @@ hierarchy.
 
 ## Working style
 
-Small diffs, one concern at a time. State assumptions in the reply instead of silently choosing. Do not
-refactor tracker code on the way past it — it is scheduled for deletion, so effort spent there is wasted.
+Small diffs, one concern at a time. State assumptions in the reply instead of silently choosing. Keep
+replies concise: answer first, short paragraphs, no restating the request and no narration of tool
+calls. Do not refactor tracker code on the way past it — it is scheduled for deletion, so effort spent
+there is wasted.

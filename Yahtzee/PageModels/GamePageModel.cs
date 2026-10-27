@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Yahtzee.Models;
@@ -18,13 +19,25 @@ public partial class GamePageModel : ObservableObject
     public const int RollsPerTurn = 3;
     public const int DiceCount = 5;
 
+    private readonly ScoreCategory _upperTotal;
+    private readonly ScoreCategory _lowerTotal;
+
     public GamePageModel()
     {
-        Dice = [.. Enumerable.Range(1, DiceCount).Select(value => new Die { Value = value })];
+        // Dice start unrolled (Value 0, drawn as ☐) until the first roll gives them faces.
+        Dice = [.. Enumerable.Range(0, DiceCount).Select(_ => new Die())];
         Scorecard = CreateScorecard();
         UpperSection = [.. Scorecard.Where(category => category.IsUpper)];
         LowerSection = [.. Scorecard.Where(category => !category.IsUpper)];
         GrandTotal = new("Grand Total", isUpper: false, isTotal: true);
+
+        // The grand total is derived, never scored: it is the two section totals added together, so it
+        // follows them rather than being written by the rules (M2). Both read 0 until scores land.
+        _upperTotal = UpperSection.First(category => category.IsTotal);
+        _lowerTotal = LowerSection.First(category => category.IsTotal);
+        _upperTotal.PropertyChanged += OnSectionTotalChanged;
+        _lowerTotal.PropertyChanged += OnSectionTotalChanged;
+        UpdateGrandTotal();
     }
 
     public IReadOnlyList<Die> Dice { get; }
@@ -52,26 +65,26 @@ public partial class GamePageModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanRoll))]
+    [NotifyPropertyChangedFor(nameof(IsFirstRollAvailable))]
+    [NotifyPropertyChangedFor(nameof(IsSecondRollAvailable))]
+    [NotifyPropertyChangedFor(nameof(IsThirdRollAvailable))]
     [NotifyCanExecuteChangedFor(nameof(RollCommand))]
     private int _rollsRemaining = RollsPerTurn;
 
-    [ObservableProperty]
-    private int _totalScore;
-
     public bool CanRoll => RollsRemaining > 0;
 
-    public bool CanEndTurn => true;
+    // One light per roll in the turn: it goes out as that roll is used, so the player can see how
+    // many are left without reading a number.
+    public bool IsFirstRollAvailable => RollsRemaining >= 1;
+
+    public bool IsSecondRollAvailable => RollsRemaining >= 2;
+
+    public bool IsThirdRollAvailable => RollsRemaining >= 3;
 
     [RelayCommand(CanExecute = nameof(CanRoll))]
     private void Roll()
     {
         // M3: re-roll every die that is not held and decrement RollsRemaining.
-    }
-
-    [RelayCommand(CanExecute = nameof(CanEndTurn))]
-    private void EndTurn()
-    {
-        // M3: score the chosen category, advance Round, reset holds and RollsRemaining.
     }
 
     [RelayCommand]
@@ -84,6 +97,21 @@ public partial class GamePageModel : ObservableObject
 
         die.IsHeld = !die.IsHeld;
     }
+
+    /// <summary>
+    /// A section total is itself a summed row, so only a new <see cref="ScoreCategory.Score"/> can move
+    /// the grand total — availability changes never do (M2/M3 fill these in).
+    /// </summary>
+    private void OnSectionTotalChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ScoreCategory.Score))
+        {
+            UpdateGrandTotal();
+        }
+    }
+
+    private void UpdateGrandTotal() =>
+        GrandTotal.Score = (_upperTotal.Score ?? 0) + (_lowerTotal.Score ?? 0);
 
     /// <summary>
     /// The standard 13 categories plus the derived rows that sit inside a column (the upper bonus and

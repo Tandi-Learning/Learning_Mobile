@@ -36,6 +36,10 @@
     <Color x:Key="Gray900">#212121</Color>
     <Color x:Key="Gray950">#141414</Color>
 
+    <!-- Positive/available state; GreenDark is the lighter variant used on a dark background. -->
+    <Color x:Key="Green">#2E9E4F</Color>
+    <Color x:Key="GreenDark">#6BD08B</Color>
+
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
     <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>

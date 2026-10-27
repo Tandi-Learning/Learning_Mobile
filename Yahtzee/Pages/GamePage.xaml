@@ -39,15 +39,14 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-
     <VerticalStackLayout Padding="{StaticResource LayoutPadding}" Spacing="18">
         <HorizontalStackLayout BindableLayout.ItemsSource="{Binding Dice}"
-                                           Spacing="8"
-                                           HorizontalOptions="Center">
+                               Spacing="8"
+                               HorizontalOptions="Center">
             <BindableLayout.ItemTemplate>
                 <DataTemplate x:DataType="models:Die">
                     <Border WidthRequest="56"
-                                        HeightRequest="72"
+                                        HeightRequest="60"
                                         Padding="0"
                                         BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray800}}"
                                         Stroke="{StaticResource Gray300}"
@@ -62,29 +61,88 @@
                                                      Binding="{Binding IsHeld}"
                                                      Value="True">
                                 <Setter Property="Stroke" Value="{StaticResource Primary}" />
-                                <Setter Property="StrokeThickness" Value="3" />
+                                <Setter Property="StrokeThickness" Value="4" />
                             </DataTrigger>
                         </Border.Triggers>
                         <Label Text="{Binding Glyph}"
                                            FontSize="46"
+                                           VerticalTextAlignment="Center"
+                                           TranslationY="-3"
                                            HorizontalOptions="Center"
-                                           VerticalOptions="Center" />
+                                           VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label"
+                                             Binding="{Binding IsHeld}"
+                                             Value="True">
+                                    <Setter Property="TranslationY" Value="-6" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
                     </Border>
                 </DataTemplate>
             </BindableLayout.ItemTemplate>
         </HorizontalStackLayout>
 
-        <Grid ColumnDefinitions="*,*"
-                  ColumnSpacing="12">
+        <Grid ColumnDefinitions="*,Auto"
+              ColumnSpacing="12">
+            <!-- Spans both columns so the button centres on the row itself, not on the space the lights leave over. -->
             <Button Grid.Column="0"
-                        Text="Roll Dice"
-                        Command="{Binding RollCommand}"
-                        FontAttributes="Bold"
-                        HeightRequest="48" />
-            <Button Grid.Column="1"
-                        Text="End Turn"
-                        Command="{Binding EndTurnCommand}"
-                        HeightRequest="48" />
+                    Grid.ColumnSpan="2"
+                    Text="Roll Dice"
+                    Command="{Binding RollCommand}"
+                    FontAttributes="Bold"
+                    HeightRequest="40"
+                    Padding="16,0"
+                    HorizontalOptions="Center" />
+
+            <!-- Rolls left for this turn: one light per roll, emptying from the right as each is used. -->
+            <HorizontalStackLayout Grid.Column="1"
+                                   Spacing="8"
+                                   BackgroundColor="Transparent"
+                                   VerticalOptions="Center">
+                <BoxView WidthRequest="24"
+                         HeightRequest="24"
+                         CornerRadius="12"
+                         BackgroundColor="Transparent"
+                         Color="Transparent">
+                    <BoxView.Triggers>
+                        <DataTrigger TargetType="BoxView"
+                                     Binding="{Binding IsFirstRollAvailable}"
+                                     Value="True">
+                            <Setter Property="Color"
+                                    Value="{AppThemeBinding Light={StaticResource Green}, Dark={StaticResource GreenDark}}" />
+                        </DataTrigger>
+                    </BoxView.Triggers>
+                </BoxView>
+                <BoxView WidthRequest="24"
+                         HeightRequest="24"
+                         CornerRadius="12"
+                         BackgroundColor="Transparent"
+                         Color="Transparent">
+                    <BoxView.Triggers>
+                        <DataTrigger TargetType="BoxView"
+                                     Binding="{Binding IsSecondRollAvailable}"
+                                     Value="True">
+                            <Setter Property="Color"
+                                    Value="{AppThemeBinding Light={StaticResource Green}, Dark={StaticResource GreenDark}}" />
+                        </DataTrigger>
+                    </BoxView.Triggers>
+                </BoxView>
+                <BoxView WidthRequest="24"
+                         HeightRequest="24"
+                         CornerRadius="12"
+                         BackgroundColor="Transparent"
+                         Color="Transparent">
+                    <BoxView.Triggers>
+                        <DataTrigger TargetType="BoxView"
+                                     Binding="{Binding IsThirdRollAvailable}"
+                                     Value="True">
+                            <Setter Property="Color"
+                                    Value="{AppThemeBinding Light={StaticResource Green}, Dark={StaticResource GreenDark}}" />
+                        </DataTrigger>
+                    </BoxView.Triggers>
+                </BoxView>
+            </HorizontalStackLayout>
         </Grid>
 
         <Border Stroke="{StaticResource Gray300}"

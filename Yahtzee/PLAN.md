@@ -10,19 +10,32 @@ Rules and invariants live in [AGENTS.md](AGENTS.md) — don't duplicate them her
 Settled — don't re-litigate these in a later session:
 
 - **13 categories**, standard scorecard: Ones–Sixes (upper), Three of a Kind, Four of a Kind, Full House,
-  Small Straight, Large Straight, Yahtzee, Chance (lower). The current mockup has only 11 (no Four of a
-  Kind, no Chance).
+  Small Straight, Large Straight, Yahtzee, Chance (lower). All 13 are listed on the page.
 - **Upper bonus**: 35 points at 63+ in the upper section. Needs a visible row.
 - **Single player**, local only. No network, no accounts, no leaderboard.
+- **The grand total is derived, not stored**: it is the upper total plus the lower total, computed from
+  the scorecard rather than held in an accumulator member. Same for the section totals — nothing derived
+  is written by the rules, and nothing derived is persisted.
 - **Persistence** extends the existing single `GameState` row rather than introducing a new pattern.
 - **Dice faces** stay Unicode glyphs (U+2680…) for now; drawn pips are a polish item, not a blocker.
-- **Scoring is pure logic** — functions that take five values and return an int, independent of MAUI types.
+- **Scoring is pure logic** — functions that take five values (plus a joker flag where the rule depends on
+  game state) and return an int, independent of MAUI types.
+- **Yahtzee bonus and joker rules: the full official rules.**
+  - Yahtzee scores 50. Each *further* Yahtzee rolled while the Yahtzee box holds 50 adds 100, counted
+    separately and shown on the Yahtzee Bonus row. The first Yahtzee earns no bonus.
+  - Joker: on five of a kind with the Yahtzee box at 50, the roll scores 5 × face in the matching upper
+    category, the sum of all five dice in Three/Four of a Kind and Chance, 25 in Full House, 30 in Small
+    Straight and 40 in Large Straight — where it would otherwise score 0.
+  - A Yahtzee box at 0 earns no bonus and no joker; the same roll scores normally (0 in Full House and
+    both straights).
+  - Placement is the player's choice: v1 does not force the matching upper box first. Revisit only if it
+    feels wrong in play.
 
 Open — decide before the milestone that needs it:
 
-- Yahtzee bonus / joker rules (extra 100 per extra Yahtzee, joker substitution) — in or out of v1?
 - Whether a `Yahtzee.Tests` project gets added at M2 or scoring stays untested for now. (Recommend adding:
-  scoring is the one part of this app that is cheap and genuinely valuable to test.)
+  scoring is the one part of this app that is cheap and genuinely valuable to test — the joker cases above
+  are exactly the ones that are easy to get wrong.)
 
 ## Milestones
 
@@ -36,20 +49,24 @@ the values are fake.
 - [x] Replace the five hard-coded `<Border>` dice with an `ItemsSource` over `Dice` + `DataTemplate`.
       Fixes the glyphs, which currently stop at ⚄, and makes a held die stylable.
 - [x] Add tap → `ToggleHoldCommand` and a visual state for held dice.
-- [x] Replace the 12 hard-coded scorecard rows with an `ItemsSource` over `Scorecard`; 13 rows plus the
-      upper-bonus row.
-- [x] Page model surface: `Dice`, `Scorecard`, `Round`, `RollsRemaining`, `TotalScore`, `RollCommand`,
-      `EndTurnCommand`, `ToggleHoldCommand`, with `CanRoll` / `CanEndTurn` guards.
-- [x] Show "Rolls left" in the header (not present today).
+- [x] Replace the 12 hard-coded scorecard rows with an `ItemsSource` over `Scorecard`; 13 categories plus
+      the derived rows (upper bonus, upper total, Yahtzee bonus, lower total) and the grand total below.
+- [x] Page model surface: `Dice`, `Scorecard`, `UpperSection`, `LowerSection`, `GrandTotal`, `Round`,
+      `RollsRemaining`, `RollCommand`, `ToggleHoldCommand`, with a `CanRoll` guard.
+- [x] Show remaining rolls: three lights at the right of the row, one emptying per roll as it is used.
+      No End Turn button — ending a turn is choosing a score, and a new game comes from the main menu.
 - [x] Delete or re-wire the dead `StartGame` command — the "Start Game" button no longer exists in the XAML.
 - [x] Remove the `Pages/GamePage.xaml` `MSBuild:Compile` pin from `Yahtzee.csproj` and confirm the page
       still compiles under `SourceGen`.
-- [ ] Runtime check by hand: tap a die and confirm the hold outline appears (no automated UI check exists).
+- [x] Runtime check by hand: tap a die and confirm the hold outline appears (no automated UI check exists).
+      Verified on Windows by hand.
 
 ### M2 — Scoring rules
 
 - [ ] `Scoring` helper: upper section, three/four of a kind, full house, both straights, Yahtzee, chance.
-- [ ] Upper bonus calculation.
+- [ ] Upper bonus: 35 points at 63+ in the upper section.
+- [ ] Yahtzee bonus: 100 per further Yahtzee, plus the joker values in other categories, both gated on
+      whether the Yahtzee box holds 50.
 - [ ] Test project covering every category, plus edge cases (five of a kind counting as a kind, straights
       across a held set, Yahtzee in every upper slot).
 
@@ -62,7 +79,8 @@ the values are fake.
 
 ### M4 — Persistence and resume
 
-- [ ] Extend `GameState` (dice, holds, rolls used, round, filled categories, total) — still one row, `ID = 1`.
+- [ ] Extend `GameState` (dice, holds, rolls used, round, filled categories) — still one row, `ID = 1`.
+      No total: the grand total is derived (see Decisions).
 - [ ] Save after every action that changes state; load on page appearing.
 - [ ] Wire the dashboard's `HasResumableGame` / `NewGame` to the real game, not the stub flag.
 
