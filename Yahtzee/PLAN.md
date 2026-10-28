@@ -19,7 +19,10 @@ Settled — don't re-litigate these in a later session:
 - **Persistence** extends the existing single `GameState` row rather than introducing a new pattern.
 - **Dice faces** stay Unicode glyphs (U+2680…) for now; drawn pips are a polish item, not a blocker.
 - **Scoring is pure logic** — functions that take five values (plus a joker flag where the rule depends on
-  game state) and return an int, independent of MAUI types.
+  game state) and return an int, independent of MAUI types. They live in `Scoring/` and are tested by
+  `Yahtzee.Tests`, which compiles those files directly instead of referencing the app: a MAUI project
+  reference drags WinUI packaging into the test build and its app icon collides there. Anything added to
+  `Scoring/` has to stay free of MAUI types, or `dotnet test` stops working.
 - **Yahtzee bonus and joker rules: the full official rules.**
   - Yahtzee scores 50. Each *further* Yahtzee rolled while the Yahtzee box holds 50 adds 100, counted
     separately and shown on the Yahtzee Bonus row. The first Yahtzee earns no bonus.
@@ -30,12 +33,6 @@ Settled — don't re-litigate these in a later session:
     both straights).
   - Placement is the player's choice: v1 does not force the matching upper box first. Revisit only if it
     feels wrong in play.
-
-Open — decide before the milestone that needs it:
-
-- Whether a `Yahtzee.Tests` project gets added at M2 or scoring stays untested for now. (Recommend adding:
-  scoring is the one part of this app that is cheap and genuinely valuable to test — the joker cases above
-  are exactly the ones that are easy to get wrong.)
 
 ## Milestones
 
@@ -63,12 +60,19 @@ the values are fake.
 
 ### M2 — Scoring rules
 
-- [ ] `Scoring` helper: upper section, three/four of a kind, full house, both straights, Yahtzee, chance.
-- [ ] Upper bonus: 35 points at 63+ in the upper section.
-- [ ] Yahtzee bonus: 100 per further Yahtzee, plus the joker values in other categories, both gated on
-      whether the Yahtzee box holds 50.
-- [ ] Test project covering every category, plus edge cases (five of a kind counting as a kind, straights
-      across a held set, Yahtzee in every upper slot).
+Done when every category, both bonuses and the joker score correctly from five die values alone, with no
+UI involved. Wiring a scorecard tap to these rules is M3.
+
+- [x] `Scoring` helper: upper section, three/four of a kind, full house, both straights, Yahtzee, chance.
+      `ScoringRules.Score(category, dice, yahtzeeBoxHoldsFifty)`, with `ScoringCategory` as the enum of
+      the 13 scored rows. The scorecard rows still carry display names, so M3 maps one to the other.
+- [x] Upper bonus: 35 points at 63+ in the upper section — `ScoringRules.UpperBonus(upperPoints)`.
+- [x] Yahtzee bonus: 100 per further Yahtzee, plus the joker values in other categories, both gated on
+      whether the Yahtzee box holds 50 — the `yahtzeeBoxHoldsFifty` flag on `Score` and
+      `YahtzeeBonus(yahtzeeBoxHoldsFifty)`.
+- [x] Test project covering every category, plus edge cases (five of a kind counting as a kind, duplicates
+      in a straight, a joker in every category, an unrolled die being rejected). 58 cases in
+      `Yahtzee.Tests`, run with `dotnet test Yahtzee.Tests/Yahtzee.Tests.csproj`.
 
 ### M3 — Turn and roll state machine
 

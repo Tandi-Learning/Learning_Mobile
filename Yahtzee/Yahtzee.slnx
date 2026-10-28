@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="Yahtzee.csproj" />
+  <Project Path="Yahtzee.Tests/Yahtzee.Tests.csproj" />
+  <Project Path="Yahtzee\Yahtzee.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
 </Solution>

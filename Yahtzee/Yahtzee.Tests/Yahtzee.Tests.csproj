@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<!-- The rules are deliberately free of MAUI types (see PLAN.md), so the tests compile the same source
+	     files rather than referencing the app project: a MAUI project reference drags WinUI packaging and
+	     Resizetizer into the test build, and its app icon collides there. Keep everything under Scoring/
+	     free of MAUI, or this stops working. -->
+	<ItemGroup>
+		<Compile Include="..\Yahtzee\Scoring\*.cs" LinkBase="Scoring" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" Version="6.0.4" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="xunit" Version="2.9.3" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+</Project>
