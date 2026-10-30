@@ -71,6 +71,9 @@ hierarchy.
 - Registrations go in `MauiProgram.cs`; Shell routes use `AddTransientWithShellRoute<TPage, TModel>("route")`.
 - Prefer editing existing files over creating new ones.
 - No new NuGet packages or abstraction layers without asking first.
+- Style rules live in the repo-root `.editorconfig`, one level above this folder — not here. It sets
+  `dotnet_analyzer_diagnostic.severity = warning`, so any style rule without an explicit option shows up
+  in the IDE. Expression bodies (`=>`) are allowed for single-line members; anything longer keeps a block.
 
 ## Definition of done
 

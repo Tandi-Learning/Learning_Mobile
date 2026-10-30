@@ -37,10 +37,10 @@ public static class ScoringRules
     /// <exception cref="ArgumentOutOfRangeException">A die is outside 1–6; 0 means "not rolled".</exception>
     public static int Score(ScoringCategory category, IReadOnlyList<int> dice, bool yahtzeeBoxHoldsFifty = false)
     {
-        var counts = CountFaces(dice);
-        var total = dice.Sum();
-        var fiveOfAKind = IsFiveOfAKind(counts);
-        var joker = yahtzeeBoxHoldsFifty && fiveOfAKind;
+        int[] counts = CountFaces(dice);
+        int total = dice.Sum();
+        bool fiveOfAKind = IsFiveOfAKind(counts);
+        bool joker = yahtzeeBoxHoldsFifty && fiveOfAKind;
 
         return category switch
         {
@@ -90,8 +90,8 @@ public static class ScoringRules
             throw new ArgumentException($"A roll is exactly {DiceCount} dice; got {dice.Count}.", nameof(dice));
         }
 
-        var counts = new int[FaceCount + 1];
-        foreach (var value in dice)
+        int[] counts = new int[FaceCount + 1];
+        foreach (int value in dice)
         {
             if (value is < 1 or > FaceCount)
             {
@@ -127,7 +127,7 @@ public static class ScoringRules
 
     private static bool HasRun(int[] counts, int first, int length)
     {
-        for (var face = first; face < first + length; face++)
+        for (int face = first; face < first + length; face++)
         {
             if (counts[face] == 0)
             {
