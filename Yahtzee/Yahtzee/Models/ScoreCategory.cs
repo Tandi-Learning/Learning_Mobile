@@ -1,5 +1,6 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Yahtzee.Scoring;
 
 namespace Yahtzee.Models;
 
@@ -10,9 +11,15 @@ namespace Yahtzee.Models;
 /// </summary>
 public partial class ScoreCategory : ObservableObject
 {
-    public ScoreCategory(string name, bool isUpper, bool isBonus = false, bool isTotal = false)
+    public ScoreCategory(
+        string name,
+        bool isUpper,
+        ScoringCategory? category = null,
+        bool isBonus = false,
+        bool isTotal = false)
     {
         _name = name;
+        Category = category;
         IsUpper = isUpper;
         IsBonus = isBonus;
         IsTotal = isTotal;
@@ -23,12 +30,31 @@ public partial class ScoreCategory : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasScore))]
+    [NotifyPropertyChangedFor(nameof(IsSpent))]
     [NotifyPropertyChangedFor(nameof(DisplayScore))]
     private int? _score;
 
     /// <summary>False once the category is used, or when the current dice cannot score it.</summary>
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanScore))]
     private bool _isAvailable = true;
+
+    /// <summary>
+    /// What this row would pay for the dice on the table right now, shown while the row is still open so
+    /// the player is not choosing blind. Null for derived rows, used rows and before the turn's first roll.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DisplayScore))]
+    private int? _preview;
+
+    /// <summary>
+    /// The rules category this row is scored with. Null on the derived rows (bonus and totals), which is
+    /// what makes them untappable.
+    /// </summary>
+    public ScoringCategory? Category { get; }
+
+    /// <summary>True while the player may still commit this row.</summary>
+    public bool CanScore => Category.HasValue && IsAvailable;
 
     /// <summary>Upper section (Ones–Sixes) or lower section (the combinations).</summary>
     public bool IsUpper { get; }
@@ -44,6 +70,16 @@ public partial class ScoreCategory : ObservableObject
 
     public bool HasScore => Score.HasValue;
 
-    /// <summary>A total is the sum of an empty section, so it starts at 0; scored rows stay blank.</summary>
-    public string DisplayScore => Score?.ToString(CultureInfo.CurrentCulture) ?? (IsTotal ? "0" : "—");
+    /// <summary>
+    /// True once a row the player filled in has been committed, which is when it reads as spent (greyed).
+    /// Derived rows are excluded on purpose: the bonus and totals always carry a value and stay bold.
+    /// </summary>
+    public bool IsSpent => HasScore && !IsDerived;
+
+    /// <summary>
+    /// A total is the sum of an empty section, so it starts at 0; scored rows stay blank. An open row shows
+    /// its <see cref="Preview"/> so the player can see what tapping it would score.
+    /// </summary>
+    public string DisplayScore =>
+        (Score ?? Preview)?.ToString(CultureInfo.CurrentCulture) ?? (IsTotal ? "0" : "—");
 }

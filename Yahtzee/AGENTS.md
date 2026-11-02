@@ -16,6 +16,7 @@ The tracker (Projects / Tasks / Tags / Categories / Dashboard) still works and s
 score correctly in isolation (`Scoring/`), but nothing on the page is wired to them yet.
 
 Work items and current state: see [PLAN.md](PLAN.md).
+Lessons already learned the hard way (toolchain, XAML gotchas, rule decisions): see [KNOWLEDGE.md](KNOWLEDGE.md).
 
 ## Build and run
 

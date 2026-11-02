@@ -10,8 +10,15 @@
         <!-- One row of the scorecard, shared by both columns. -->
         <DataTemplate x:Key="ScoreRowTemplate"
                       x:DataType="models:ScoreCategory">
+            <!-- Transparent rather than unset: a null background is not hit-testable on every platform. -->            
             <Grid ColumnDefinitions="*,Auto"
-                  Padding="14,10">
+                  Padding="14,10"
+                  BackgroundColor="Transparent">
+                <!-- Tapping the row is the whole choice: it scores that category and ends the turn. -->
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type pageModels:GamePageModel}}, Path=ScoreRowCommand}"
+                                          CommandParameter="{Binding .}" />
+                </Grid.GestureRecognizers>
                 <Label Grid.Column="0"
                        Text="{Binding Name}">
                     <Label.Triggers>
@@ -20,6 +27,13 @@
                                      Value="True">
                             <Setter Property="FontAttributes" Value="Bold" />
                             <Setter Property="FontSize" Value="15" />
+                        </DataTrigger>
+                        <!-- A used row stays on the board but reads as spent; derived rows keep their own colour. -->
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding IsSpent}"
+                                     Value="True">
+                            <Setter Property="TextColor"
+                                    Value="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
                         </DataTrigger>
                     </Label.Triggers>
                 </Label>
@@ -32,6 +46,12 @@
                                      Value="True">
                             <Setter Property="FontAttributes" Value="Bold" />
                             <Setter Property="FontSize" Value="15" />
+                        </DataTrigger>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding IsSpent}"
+                                     Value="True">
+                            <Setter Property="TextColor"
+                                    Value="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray500}}" />
                         </DataTrigger>
                     </Label.Triggers>
                 </Label>
@@ -95,7 +115,7 @@
                     Padding="16,0"
                     HorizontalOptions="Center" />
 
-            <!-- Rolls left for this turn: one light per roll, emptying from the right as each is used. -->
+            <!-- Rolls left for this turn: one light per roll, going grey from the right as each is used. -->
             <HorizontalStackLayout Grid.Column="1"
                                    Spacing="8"
                                    BackgroundColor="Transparent"
@@ -104,7 +124,7 @@
                          HeightRequest="24"
                          CornerRadius="12"
                          BackgroundColor="Transparent"
-                         Color="Transparent">
+                         Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
                     <BoxView.Triggers>
                         <DataTrigger TargetType="BoxView"
                                      Binding="{Binding IsFirstRollAvailable}"
@@ -118,7 +138,7 @@
                          HeightRequest="24"
                          CornerRadius="12"
                          BackgroundColor="Transparent"
-                         Color="Transparent">
+                         Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
                     <BoxView.Triggers>
                         <DataTrigger TargetType="BoxView"
                                      Binding="{Binding IsSecondRollAvailable}"
@@ -132,7 +152,7 @@
                          HeightRequest="24"
                          CornerRadius="12"
                          BackgroundColor="Transparent"
-                         Color="Transparent">
+                         Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}">
                     <BoxView.Triggers>
                         <DataTrigger TargetType="BoxView"
                                      Binding="{Binding IsThirdRollAvailable}"

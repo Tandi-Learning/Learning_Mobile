@@ -76,8 +76,14 @@ UI involved. Wiring a scorecard tap to these rules is M3.
 
 ### M3 — Turn and roll state machine
 
-- [ ] Roll up to 3 times per turn; held dice survive a re-roll.
-- [ ] Scoring a category ends the turn, resets holds, advances the round.
+- [x] Roll up to 3 times per turn; held dice survive a re-roll. `Roll()` re-faces every die whose
+      `IsHeld` is false and spends one of `RollsRemaining`; `RollCommand`'s `CanExecute` and the three
+      lights all derive from `RollsRemaining`.
+- [x] Scoring a category ends the turn, resets holds, advances the round. Tapping a scorecard row
+      (`ScoreRowCommand`) commits it, marks it used and calls `StartNewTurn()`. Rows carry their
+      `ScoringCategory`, so the derived ones cannot be tapped. Open rows preview their value from the
+      current dice; section totals and the upper bonus are re-summed on every commit, and a five of a
+      kind taken while the Yahtzee box holds 50 pays the 100-point bonus.
 - [ ] 13 rounds, then game over.
 - [ ] Commands disabled correctly at every boundary (no rolls left, category already used, game over).
 
