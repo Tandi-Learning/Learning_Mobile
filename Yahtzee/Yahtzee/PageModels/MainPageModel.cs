@@ -127,15 +127,16 @@ namespace Yahtzee.PageModels
         [RelayCommand]
         private async Task NewGame()
         {
+            // Discard the saved board before navigating: the game page restores whatever it finds, so a
+            // finished or abandoned game must not come back as a new one.
+            await _gameStateRepository.ClearAsync();
             await Shell.Current.GoToAsync("game");
         }
 
         [RelayCommand(CanExecute = nameof(CanResumeGame))]
-        private async Task ResumeGame()
-        {
-            HasResumableGame = false;
-            await _gameStateRepository.SetInProgressAsync(HasResumableGame);
-        }
+        private Task ResumeGame()
+            // Nothing to restore here: the game page loads the saved board when it appears.
+            => Shell.Current.GoToAsync("game");
 
         [RelayCommand]
         private static void ScoreHistory()

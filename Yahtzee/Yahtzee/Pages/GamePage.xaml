@@ -3,9 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:Yahtzee.Models"
              xmlns:pageModels="clr-namespace:Yahtzee.PageModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Yahtzee.Pages.GamePage"
              x:DataType="pageModels:GamePageModel"
+             x:Name="GameBoard"
              Title="Game">
+    <ContentPage.Behaviors>
+        <!-- The page only reports that it appeared; the saved game is loaded by the page model. -->
+        <toolkit:EventToCommandBehavior
+                BindingContext="{Binding Path=BindingContext, Source={x:Reference GameBoard}, x:DataType=ContentPage}"
+                EventName="Appearing"
+                Command="{Binding AppearingCommand}" />
+    </ContentPage.Behaviors>
     <ContentPage.Resources>
         <!-- One row of the scorecard, shared by both columns. -->
         <DataTemplate x:Key="ScoreRowTemplate"

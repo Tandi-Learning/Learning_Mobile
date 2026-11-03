@@ -17,6 +17,9 @@ Settled — don't re-litigate these in a later session:
   the scorecard rather than held in an accumulator member. Same for the section totals — nothing derived
   is written by the rules, and nothing derived is persisted.
 - **Persistence** extends the existing single `GameState` row rather than introducing a new pattern.
+- **Starting a new game deletes the saved row** rather than writing a default one: an untouched board is
+  not worth resuming, and no half-filled row is left for the loader to misread. `IsGameOver` is derived
+  from `Round`, not stored, so restoring the round restores the ending.
 - **Dice faces** stay Unicode glyphs (U+2680…) for now; drawn pips are a polish item, not a blocker.
 - **Scoring is pure logic** — functions that take five values (plus a joker flag where the rule depends on
   game state) and return an int, independent of MAUI types. They live in `Scoring/` and are tested by
@@ -84,15 +87,21 @@ UI involved. Wiring a scorecard tap to these rules is M3.
       `ScoringCategory`, so the derived ones cannot be tapped. Open rows preview their value from the
       current dice; section totals and the upper bonus are re-summed on every commit, and a five of a
       kind taken while the Yahtzee box holds 50 pays the 100-point bonus.
-- [ ] 13 rounds, then game over.
-- [ ] Commands disabled correctly at every boundary (no rolls left, category already used, game over).
+- [x] 13 rounds, then game over. `Round` counts committed categories, so `IsGameOver`
+      (`Round > TotalRounds`) turns true on the thirteenth commit and `CanRoll` stops the roll there.
+- [x] Commands disabled correctly at every boundary (no rolls left, category already used, game over).
+      `CanRoll` covers both the spent rolls and the ending; `ToggleHold` and `ScoreRow` refuse until the
+      turn has been rolled; used and derived rows are rejected inside `ScoreRow`, since a tap on a
+      `TapGestureRecognizer` cannot be disabled per row.
 
 ### M4 — Persistence and resume
 
-- [ ] Extend `GameState` (dice, holds, rolls used, round, filled categories) — still one row, `ID = 1`.
+- [x] Extend `GameState` (dice, holds, rolls left, round, filled categories) — still one row, `ID = 1`.
       No total: the grand total is derived (see Decisions).
-- [ ] Save after every action that changes state; load on page appearing.
-- [ ] Wire the dashboard's `HasResumableGame` / `NewGame` to the real game, not the stub flag.
+- [x] Save after every action that changes state; load on page appearing.
+      Verified on Windows by hand: roll, hold and commit then Resume restores the board; New Game then
+      quitting immediately leaves nothing to resume; the thirteenth commit removes Resume.
+- [x] Wire the dashboard's `HasResumableGame` / `NewGame` to the real game, not the stub flag.
 
 ### M5 — End of game
 
