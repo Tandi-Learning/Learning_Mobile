@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using System.Globalization;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Controls;
 using Yahtzee.Data.Repositories;
 using Yahtzee.Models;
 using Yahtzee.Scoring;
@@ -33,9 +35,12 @@ public partial class GamePageModel : ObservableObject
     private readonly ScoreCategory _yahtzee;
     private readonly ScoreCategory _yahtzeeBonus;
 
-    public GamePageModel(GameStateRepository gameStateRepository, ModalErrorHandler errorHandler)
+    private readonly ResultRepository _resultRepository;
+
+    public GamePageModel(GameStateRepository gameStateRepository, ResultRepository resultRepository, ModalErrorHandler errorHandler)
     {
         _gameStateRepository = gameStateRepository;
+        _resultRepository = resultRepository;
         _errorHandler = errorHandler;
 
         // Dice start unrolled (Value 0, drawn as ☐) until the first roll gives them faces.
@@ -85,12 +90,15 @@ public partial class GamePageModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsGameOver))]
     [NotifyPropertyChangedFor(nameof(CanRoll))]
     [NotifyCanExecuteChangedFor(nameof(RollCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PlayAgainCommand))]
     private int _round = 1;
 
-    /// <summary>
-    /// True once the thirteenth category has been committed. Derived rather than stored: the round already
-    /// says it, and a restored round says it without a second value to keep in step.
-    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotTopTen))]
+    private bool _isTopTen;
+
+    /// <summary>True once the thirteenth category has been committed. Derived rather than stored: the round already
+    /// says it, and a restored round says it without a second value to keep in step.</summary>
     public bool IsGameOver => Round > TotalRounds;
 
     [ObservableProperty]
@@ -145,6 +153,7 @@ public partial class GamePageModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanRoll))]
     private async Task Roll()
     {
+        //await ShowEndGameDialog();
         // Held dice keep the face they already show, so a second roll only disturbs the rest.
         foreach (Die die in Dice)
         {
@@ -209,6 +218,13 @@ public partial class GamePageModel : ObservableObject
         StartNewTurn();
 
         await SaveAsync();
+
+        if (IsGameOver)
+        {
+            int grandTotal = GrandTotal.Score!.Value;
+            IsTopTen = await _resultRepository.IsInTopNAsync(grandTotal, ResultRepository.LeaderboardSize);
+            await ShowEndGameDialog();
+        }
     }
 
     /// <summary>
@@ -289,6 +305,91 @@ public partial class GamePageModel : ObservableObject
 
         StartNewTurn();
         UpdateSectionTotals();
+
+        IsTopTen = false;
+    }
+
+    [ObservableProperty]
+    private string _playerName = string.Empty;
+
+    /// <summary>Inverse of <see cref="IsTopTen"/> for XAML visibility toggling inside the popup.</summary>
+    public bool IsNotTopTen => !IsTopTen;
+
+    /// <summary>
+    /// Opens the end-game modal dialog after a game finishes. The dialog is the only UI for the finished-game card.
+    /// </summary>
+    private async Task ShowEndGameDialog()
+    {
+        // Pushed as a modal rather than navigated to as a Shell route: a modal sits outside the navigation
+        // stack, so the back button can never return to a finished game's card. It binds this same model, so
+        // the dialog edits the game in progress rather than a copy.
+        await Shell.Current.Navigation.PushModalAsync(new Yahtzee.Pages.GameEndPopupPage { BindingContext = this });
+    }
+
+    /// <summary>
+    /// A top-10 finish is recorded whenever the player leaves the end-game card, whether by starting another game
+    /// or by quitting. A blank name becomes "No name". PlayerName is cleared after writing the result.
+    /// This is called by the end-game dialog rather than by an in-page frame, since there is no in-page frame anymore.
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanPlayAgain))]
+    private async Task PlayAgain()
+    {
+        await SaveResultIfTopTenAsync();
+        await _gameStateRepository.ClearAsync();
+        StartNewGame();
+    }
+
+    private bool CanPlayAgain => IsGameOver;
+
+    [RelayCommand]
+    private async Task Quit()
+    {
+        await SaveResultIfTopTenAsync();
+        PlayerName = string.Empty;
+        await Shell.Current.GoToAsync("//main");
+    }
+
+    private async Task SaveResultIfTopTenAsync()
+    {
+        if (!IsTopTen)
+        {
+            return;
+        }
+
+        string name = string.IsNullOrWhiteSpace(PlayerName) ? "No name" : PlayerName.Trim();
+        GameResult result = new GameResult
+        {
+            Name = name,
+            Score = GrandTotal.Score.Value,
+            FinishedAtTicks = DateTime.Now.Ticks,
+        };
+        await _resultRepository.InsertTopAsync(result, ResultRepository.LeaderboardSize);
+
+        PlayerName = string.Empty;
+    }
+
+    /// <summary>
+    /// Called by the end-game dialog when the player chooses Play Again. Saves the result if needed, restarts the
+    /// game on the shared model, then returns to the game page so the new board is visible.
+    /// </summary>
+    [RelayCommand]
+    public async Task PlayAgainDialog()
+    {
+        await PlayAgain();
+        await Shell.Current.Navigation.PopModalAsync();
+    }
+
+    /// <summary>
+    /// Called by the end-game dialog when the player chooses Quit. Saves the result if needed, clears the name, then
+    /// returns to the main page.
+    /// </summary>
+    [RelayCommand]
+    public async Task QuitDialog()
+    {
+        // Close the dialog before leaving: a modal draws above the Shell, so navigating underneath it
+        // would leave the card on screen over the main page.
+        await Shell.Current.Navigation.PopModalAsync();
+        await Quit();
     }
 
     /// <summary>

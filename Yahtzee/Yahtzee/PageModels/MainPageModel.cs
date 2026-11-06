@@ -139,10 +139,8 @@ namespace Yahtzee.PageModels
             => Shell.Current.GoToAsync("game");
 
         [RelayCommand]
-        private static void ScoreHistory()
-        {
-
-        }
+        private async Task ScoreHistory()
+            => await Shell.Current.GoToAsync("scorehistory");
 
         [RelayCommand]
         private static void Exit()

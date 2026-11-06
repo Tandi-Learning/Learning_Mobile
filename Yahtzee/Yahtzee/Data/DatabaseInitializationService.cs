@@ -37,6 +37,7 @@ public sealed class DatabaseInitializationService
             await connection.CreateTableAsync<Tag>(CreateFlags.None).ConfigureAwait(false);
             await connection.CreateTableAsync<ProjectsTags>(CreateFlags.None).ConfigureAwait(false);
             await connection.CreateTableAsync<GameState>(CreateFlags.None).ConfigureAwait(false);
+            await connection.CreateTableAsync<GameResult>(CreateFlags.None).ConfigureAwait(false);
 
             _logger.LogInformation("SQLite database initialized at {DatabasePath}.", Constants.DatabasePath);
         }

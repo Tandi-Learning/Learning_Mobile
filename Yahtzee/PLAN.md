@@ -105,8 +105,9 @@ UI involved. Wiring a scorecard tap to these rules is M3.
 
 ### M5 — End of game
 
-- [ ] Final scorecard with the upper bonus applied.
-- [ ] "Play again" resets state cleanly.
+- [x] Final scorecard with the upper bonus applied.
+- [x] End-game card shown for every finished game: final score always; top-10 finish shows "You finished in the top 10, enter your name" plus a name entry and Play Again / Quit buttons, with the score recorded (blank name → "No name") when Play Again is chosen; non-top-10 finish shows "Your score is not in the top 10" with Play Again / Quit and no record written.
+- [x] Hand-verified on Windows: the thirteenth commit opens the end-game popup.
 
 ### M6 — Delete the tracker
 

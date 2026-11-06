@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pageModels="clr-namespace:Yahtzee.PageModels"
+             x:Class="Yahtzee.Pages.GameEndPopupPage"
+             x:DataType="pageModels:GamePageModel"
+             BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"
+             Title="Game Over">
+    <Grid VerticalOptions="Fill">
+        <!-- Dimmed backdrop filling the whole screen. -->
+        <BoxView Color="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray800}}"
+                 Opacity="0.85"
+                 HorizontalOptions="Fill"
+                 VerticalOptions="Fill" />
+
+        <!-- Centered card on top of the backdrop. -->
+        <Border BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray800}}"
+                Stroke="{StaticResource Gray300}"
+                StrokeShape="RoundRectangle 14"
+                StrokeThickness="1"
+                Padding="18"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="320">
+            <VerticalStackLayout Spacing="14">
+                <Label Text="Game Over"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" />
+
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
+                    <Label Text="{Binding GrandTotal.Name}"
+                           FontAttributes="Bold"
+                           FontSize="22"
+                           HorizontalOptions="Center" />
+                    <Label Text="{Binding GrandTotal.DisplayScore}" 
+                           FontAttributes="Bold"
+                           FontSize="22"
+                           HorizontalOptions="Center"
+                           TextColor="{StaticResource Primary}" />
+                </HorizontalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding IsTopTen}" Spacing="10">
+                    <Label Text="You finished in the top 10, enter your name"
+                           FontSize="14"
+                           HorizontalOptions="Center" />
+                    <Entry Text="{Binding PlayerName}"
+                           MaxLength="10" />
+                </VerticalStackLayout>
+
+                <Label Text="Your score is not in the top 10"
+                       FontSize="13"
+                       HorizontalOptions="Center"
+                       IsVisible="{Binding IsNotTopTen}" />
+
+                <HorizontalStackLayout Spacing="14" HorizontalOptions="Center">
+                    <Button Text="Play Again"
+                           Command="{Binding PlayAgainDialogCommand}"
+                           HorizontalOptions="Center" />
+                    <Button Text="Quit"
+                           Command="{Binding QuitDialogCommand}"
+                           HorizontalOptions="Center" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>

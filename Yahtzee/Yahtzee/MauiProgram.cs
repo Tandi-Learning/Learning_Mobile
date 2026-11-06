@@ -51,6 +51,7 @@ namespace Yahtzee
             builder.Services.AddSingleton<CategoryRepository>();
             builder.Services.AddSingleton<TagRepository>();
             builder.Services.AddSingleton<GameStateRepository>();
+            builder.Services.AddSingleton<ResultRepository>();
             builder.Services.AddSingleton<DatabaseInitializationService>();
             builder.Services.AddSingleton<SeedDataService>();
             builder.Services.AddSingleton<ModalErrorHandler>();
@@ -58,10 +59,12 @@ namespace Yahtzee
             builder.Services.AddSingleton<ProjectListPageModel>();
             builder.Services.AddSingleton<ManageMetaPageModel>();
             builder.Services.AddTransient<GamePageModel>();
+            builder.Services.AddTransient<ScoreHistoryPageModel>();
 
             builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
             builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
             builder.Services.AddTransientWithShellRoute<GamePage, GamePageModel>("game");
+            builder.Services.AddTransientWithShellRoute<ScoreHistoryPage, ScoreHistoryPageModel>("scorehistory");
 
             MauiApp app = builder.Build();
             DatabaseInitializationService databaseInitializationService =
