@@ -120,9 +120,7 @@ Only after the game runs end to end. Keep the dashboard page; remove its tracker
       schema, so stale local databases don't linger.
 - [x] Remove now-unused packages (Syncfusion would go here if the chart controls were the last user).
       Syncfusion stays: the flyout's theme toggle still uses its segmented control.
-- [ ] Final `dotnet build` clean on Windows and Android. Windows is clean; the Android build is blocked
-      locally by Visual Studio holding `obj/Debug/net10.0-android` files (`Yahtzee.dll` locked), so it
-      still needs one run with the IDE closed.
+- [x] Final `dotnet build` clean on Windows and Android.
 
 ### M7 — Polish
 

@@ -7,8 +7,7 @@ namespace Yahtzee.Scoring;
 /// </summary>
 /// <remarks>
 /// <see cref="Ones"/> through <see cref="Sixes"/> keep their face value, so <c>(int)category</c> is the
-/// face they count. Named <c>ScoringCategory</c> rather than <c>Category</c> because the tracker model
-/// <see cref="Models.Category"/> still exists and would collide.
+/// face they count.
 /// </remarks>
 public enum ScoringCategory
 {
