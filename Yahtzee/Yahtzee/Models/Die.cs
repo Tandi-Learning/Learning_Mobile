@@ -22,13 +22,23 @@ public partial class Die : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Glyph))]
+    [NotifyPropertyChangedFor(nameof(Description))]
     private int _value = 0;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Description))]
     private bool _isHeld;
 
     /// <summary>Die face for the current value: ⚀ ⚁ ⚂ ⚃ ⚄ ⚅ — or ☐ while the die is unrolled.</summary>
     public string Glyph => Value == 0
         ? char.ConvertFromUtf32(EmptyFaceCodePoint)
         : char.ConvertFromUtf32(FirstFaceCodePoint + Math.Clamp(Value, 1, FaceCount) - 1);
+
+    /// <summary>
+    /// The die in words for a screen reader. <see cref="Glyph"/> is a symbol in a symbol font, so without
+    /// this the die is announced as an unpronounceable character — or not at all.
+    /// </summary>
+    public string Description => Value == 0
+        ? "Not rolled"
+        : IsHeld ? $"Showing {Value}, held" : $"Showing {Value}";
 }

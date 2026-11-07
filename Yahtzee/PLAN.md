@@ -124,8 +124,18 @@ Only after the game runs end to end. Keep the dashboard page; remove its tracker
 
 ### M7 — Polish
 
-- [ ] Decide on drawn pips vs Unicode glyphs with real font coverage on Android and Windows.
-- [ ] Held-die styling, roll animation or feedback.
-- [ ] Light/dark theme pass on the game screen.
-- [ ] Accessibility: labels for dice, semantic descriptions for scorecard rows.
+- [x] Decide on drawn pips vs Unicode glyphs with real font coverage on Android and Windows.
+      Decision: keep the glyphs. Measured cmaps: Windows Segoe UI and Android Roboto lack U+2680–U+2685
+      and U+2610, but Segoe UI Symbol and Noto Sans Symbols (Android's fallback) have all seven, and the
+      faces render on both — so a pip grid would buy nothing.
+- [x] Held-die styling, roll animation or feedback.
+- [x] Light/dark theme pass on the game screen.
+      Dice and card strokes went from a fixed `Gray300` (loud on a dark card) to `Gray300`/`Gray500`, and the
+      two `Primary` accents (held die, end-game score) to `Primary`/`PrimaryDark`. Verified by sampling
+      pixels on an Android device in both themes; light mode is unchanged.
+- [x] Accessibility: labels for dice, semantic descriptions for scorecard rows.
+      `Die.Description` and `ScoreCategory.Description` are computed from state and bound to
+      `SemanticProperties.Description` on the labels (the node a screen reader actually reaches). Verified
+      through `uiautomator dump`: "Showing 5, held", "Fours, scores 4, tap to commit", "Ones, scored 1".
+      The bare value label is still announced on Android — MAUI 10 does not map the exclusion properties.
 

@@ -150,10 +150,15 @@ public partial class GamePageModel : ObservableObject
         }
     }
 
+    /// <summary>
+    /// Raised once the dice have been re-faced, so the view can show the roll. The model says the dice
+    /// changed; how that looks is the view's business.
+    /// </summary>
+    public event EventHandler? Rolled;
+
     [RelayCommand(CanExecute = nameof(CanRoll))]
     private async Task Roll()
     {
-        //await ShowEndGameDialog();
         // Held dice keep the face they already show, so a second roll only disturbs the rest.
         foreach (Die die in Dice)
         {
@@ -165,6 +170,7 @@ public partial class GamePageModel : ObservableObject
 
         RollsRemaining--;
         UpdatePreviews();
+        Rolled?.Invoke(this, EventArgs.Empty);
 
         await SaveAsync();
     }

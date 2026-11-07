@@ -15,7 +15,7 @@
 
         <!-- Centered card on top of the backdrop. -->
         <Border BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray800}}"
-                Stroke="{StaticResource Gray300}"
+                Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray500}}"
                 StrokeShape="RoundRectangle 14"
                 StrokeThickness="1"
                 Padding="18"
@@ -36,7 +36,7 @@
                            FontAttributes="Bold"
                            FontSize="22"
                            HorizontalOptions="Center"
-                           TextColor="{StaticResource Primary}" />
+                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                 </HorizontalStackLayout>
 
                 <VerticalStackLayout IsVisible="{Binding IsTopTen}" Spacing="10">

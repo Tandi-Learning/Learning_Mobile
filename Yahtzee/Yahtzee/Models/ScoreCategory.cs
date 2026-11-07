@@ -26,12 +26,14 @@ public partial class ScoreCategory : ObservableObject
     }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Description))]
     private string _name;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasScore))]
     [NotifyPropertyChangedFor(nameof(IsSpent))]
     [NotifyPropertyChangedFor(nameof(DisplayScore))]
+    [NotifyPropertyChangedFor(nameof(Description))]
     private int? _score;
 
     /// <summary>False once the category is used, or when the current dice cannot score it.</summary>
@@ -45,6 +47,7 @@ public partial class ScoreCategory : ObservableObject
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(DisplayScore))]
+    [NotifyPropertyChangedFor(nameof(Description))]
     private int? _preview;
 
     /// <summary>
@@ -82,4 +85,16 @@ public partial class ScoreCategory : ObservableObject
     /// </summary>
     public string DisplayScore =>
         (Score ?? Preview)?.ToString(CultureInfo.CurrentCulture) ?? (IsTotal ? "0" : "—");
+
+    /// <summary>
+    /// The row as one sentence for a screen reader, which otherwise reads <see cref="Name"/> and
+    /// <see cref="DisplayScore"/> as two unrelated items and never mentions that the row can be tapped.
+    /// </summary>
+    public string Description => IsDerived
+        ? $"{Name}, {DisplayScore}"
+        : Score is { } score
+            ? $"{Name}, scored {score}"
+            : Preview is { } preview
+                ? $"{Name}, scores {preview}, tap to commit"
+                : $"{Name}, no score yet";
 }

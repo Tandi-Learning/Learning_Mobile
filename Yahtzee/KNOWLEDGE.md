@@ -77,6 +77,12 @@ grep -i "abi.type" "$USERPROFILE"/.android/avd/*.avd/config.ini
   `NETSDK1005`. Name the app project: `dotnet build Yahtzee/Yahtzee.csproj -f net10.0-windows10.0.19041.0`.
 - Android needs a live emulator; the Windows target is the fast loop. Use Android only for
   platform-specific work.
+- **`adb install` of a Debug APK installs code the app will not run.** Debug builds use Fast Deployment:
+  the APK is a stub and the managed assemblies live in
+  `/data/user/0/<pkg>/files/.__override__/<abi>/`. A plain `adb install -r` leaves the *previous* build's
+  assemblies in place (so you test stale code and see stale colours), and after `adb uninstall` the
+  directory is empty and the app aborts with `monodroid: No assemblies found ... Exiting`. Deploy with
+  `dotnet build Yahtzee.csproj -f net10.0-android -t:Install` instead.
 
 ---
 
@@ -121,6 +127,29 @@ be true ("has a number").
 The third roll light was bound to `RollFlags[2]`, a leftover collection nothing wrote, so it stayed grey
 with three rolls left. XAML source-gen catches *typos* in names, not bindings that resolve to an empty
 value forever. When a control never updates, check the source property exists and is actually set.
+
+### Die faces come from a fallback font, so do not "improve" them
+
+U+2680–U+2685 and U+2610 are in neither Segoe UI nor Roboto — the default UI font on each platform. They
+render because the platform falls back: Segoe UI Symbol (`C:\Windows\Fonts\seguisym.ttf`) on Windows, and
+`NotoSansSymbols-Regular-Subsetted.ttf` on Android (the `NotoSansSymbols-Regular-Subsetted2.ttf` family is
+the one that *lacks* them, so do not repoint the label at it). Verified rendered, not just present in the
+cmap: Windows by eye, Android on an API 36 emulator against the score previews. A drawn pip grid would buy
+nothing over this.
+
+### Semantics have to go on the label, and you cannot hide the second label
+
+- In a `DataTemplate` the node a screen reader reaches is the `Label`, not the `Border` or `Grid` around it
+  that carries the tap gesture. Put `SemanticProperties.Description` on the label and the string arrives as
+  `content-desc` on Android.
+- Nothing in MAUI 10 removes a sibling label from the Android accessibility tree:
+  `AutomationProperties.IsInAccessibleTree="False"` is not mapped (a test button stayed in the tree with
+  `uiautomator dump`), and neither is `SemanticProperties.ExcludedWithChildren`. A scorecard row therefore
+  announces its sentence and then its bare number. `AutomationProperties.ExcludedWithChildren` compiles and
+  mirrors a real WinUI property, so it is worth keeping for Windows — but never assume it works elsewhere.
+- **Verify semantics without a screen reader:** `adb shell uiautomator dump` exposes `content-desc`, so the
+  announcement can be read off the device. That is how the dice ("Showing 5, held") and the row states were
+  confirmed.
 
 ### Derived properties need explicit change notifications
 
