@@ -9,12 +9,12 @@ public static class Constants
      * - list all the files
      *   adb shell run-as com.companyname.yahtzee ls files
      * - copy to local folder from emulator
-     *   adb pull /data/user/0/com.companyname.yahtzee/files/yahtzee.db3
+     *   adb pull /data/user/0/com.companyname.yahtzee/files/yahtzee2.db3
      * - remove the database
      *   adb shell rm -f /data/user/0/com.companyname.yahtzee/files/appsqlite.db3
     */
 
-    public const string DatabaseFilename = "yahtzee.db3";
+    public const string DatabaseFilename = "yahtzee2.db3";
 
     public static string DatabaseFilePath => Path.Combine(FileSystem.AppDataDirectory, DatabaseFilename);
 

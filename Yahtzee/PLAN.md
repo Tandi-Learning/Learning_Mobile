@@ -113,13 +113,16 @@ UI involved. Wiring a scorecard tap to these rules is M3.
 
 Only after the game runs end to end. Keep the dashboard page; remove its tracker content.
 
-- [ ] New Yahtzee home page replaces the tracker dashboard (`MainPageModel` is shared ground — see AGENTS.md).
-- [ ] Delete `Project`, `ProjectTask`, `Tag`, `Category`, `ProjectsTags`, their repositories, seed service,
+- [x] New Yahtzee home page replaces the tracker dashboard (`MainPageModel` is shared ground — see AGENTS.md).
+- [x] Delete `Project`, `ProjectTask`, `Tag`, `Category`, `ProjectsTags`, their repositories, seed service,
       `SeedData.json`, tracker pages/page models, chart controls, and tracker Shell routes.
-- [ ] Drop tracker tables from `DatabaseInitializationService` and raise the DB filename or clear the
+- [x] Drop tracker tables from `DatabaseInitializationService` and raise the DB filename or clear the
       schema, so stale local databases don't linger.
-- [ ] Remove now-unused packages (Syncfusion would go here if the chart controls were the last user).
-- [ ] Final `dotnet build` clean on Windows and Android.
+- [x] Remove now-unused packages (Syncfusion would go here if the chart controls were the last user).
+      Syncfusion stays: the flyout's theme toggle still uses its segmented control.
+- [ ] Final `dotnet build` clean on Windows and Android. Windows is clean; the Android build is blocked
+      locally by Visual Studio holding `obj/Debug/net10.0-android` files (`Yahtzee.dll` locked), so it
+      still needs one run with the IDE closed.
 
 ### M7 — Polish
 
@@ -128,9 +131,3 @@ Only after the game runs end to end. Keep the dashboard page; remove its tracker
 - [ ] Light/dark theme pass on the game screen.
 - [ ] Accessibility: labels for dice, semantic descriptions for scorecard rows.
 
-## Known debt, deliberately deferred
-
-- Schema defined twice (models + raw SQL in repositories) — becomes moot at M6.
-- `MainPageModel` is a singleton page model holding tracker state; revisit when the dashboard is reborn.
-- `ProjectDetailPageModel` / `TaskDetailPageModel` violate several analyzers; they are being deleted, so
-  leave them alone.

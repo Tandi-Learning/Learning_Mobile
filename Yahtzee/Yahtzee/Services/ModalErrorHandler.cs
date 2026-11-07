@@ -13,7 +13,7 @@ namespace Yahtzee.Services
         /// <param name="ex">Exception.</param>
         public void HandleError(Exception ex)
         {
-            DisplayAlertAsync(ex).FireAndForgetSafeAsync();
+            _ = DisplayAlertAsync(ex);
         }
 
         async Task DisplayAlertAsync(Exception ex)

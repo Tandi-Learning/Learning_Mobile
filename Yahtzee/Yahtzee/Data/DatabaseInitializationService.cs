@@ -31,11 +31,6 @@ public sealed class DatabaseInitializationService
         {
             SQLiteAsyncConnection connection = SqliteService.GetConnection();
 
-            await connection.CreateTableAsync<Category>(CreateFlags.None).ConfigureAwait(false);
-            await connection.CreateTableAsync<Project>(CreateFlags.None).ConfigureAwait(false);
-            await connection.CreateTableAsync<ProjectTask>(CreateFlags.None).ConfigureAwait(false);
-            await connection.CreateTableAsync<Tag>(CreateFlags.None).ConfigureAwait(false);
-            await connection.CreateTableAsync<ProjectsTags>(CreateFlags.None).ConfigureAwait(false);
             await connection.CreateTableAsync<GameState>(CreateFlags.None).ConfigureAwait(false);
             await connection.CreateTableAsync<GameResult>(CreateFlags.None).ConfigureAwait(false);
 

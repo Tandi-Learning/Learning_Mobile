@@ -10,10 +10,9 @@ nested `Yahtzee/` folder, and `Yahtzee.Tests/` beside it.
 
 ## What this project is
 
-A .NET MAUI Yahtzee game, currently **half-converted** from Microsoft's "Project Tracker" MAUI sample.
-The tracker (Projects / Tasks / Tags / Categories / Dashboard) still works and still ships, but it is
-**temporary scaffolding and will be deleted**. The Yahtzee game is still a UI mockup: the 13 categories
-score correctly in isolation (`Scoring/`), but nothing on the page is wired to them yet.
+A .NET MAUI Yahtzee game. The "Project Tracker" sample it began as has been deleted; what ships is the
+home page (new game / resume / score history), the game page, the end-game dialog and the score history.
+The 13 categories score through `Scoring/`, and `GamePageModel` is what wires the board to them.
 
 Work items and current state: see [PLAN.md](PLAN.md).
 Lessons already learned the hard way (toolchain, XAML gotchas, rule decisions): see [KNOWLEDGE.md](KNOWLEDGE.md).
@@ -39,15 +38,10 @@ XAML source-gen). Do not chase pre-existing warnings, and do not introduce new e
 
 ## Invariants — break these and the app breaks quietly
 
-- **The SQLite schema is defined twice**: `sqlite-net` attributes on the models in `Models/`, and raw
-  `CREATE TABLE IF NOT EXISTS` SQL inside each repository in `Data/Repositories/`. Changing a model
-  means changing both. The two can drift without any compile error.
 - **`GameState` is a single row, `ID = 1`.** It is a singleton, not a collection. Do not add rows to it.
 - `DatabaseInitializationService.InitializeAsync()` is called **synchronously** in `MauiProgram.CreateMauiApp()`.
   Startup blocks on it by design.
-- `MainPageModel` implements `IProjectTaskPageModel` **and** owns `HasResumableGame` / `NewGame`.
-  The dashboard is shared ground: when tracker code is deleted, the page must survive with its tracker
-  content removed, not deleted wholesale.
+- `MainPageModel` owns `HasResumableGame` / `NewGame`; `Pages/MainPage.xaml` is the home page.
 - **`Scoring/` stays free of MAUI types.** `Yahtzee.Tests` compiles those files directly rather than
   referencing the app, because a MAUI project reference drags WinUI packaging into the test build and
   its app icon collides there. A MAUI type in `Scoring/` breaks `dotnet test`.
@@ -57,18 +51,12 @@ XAML source-gen). Do not chase pre-existing warnings, and do not introduce new e
 
 ## Conventions to follow
 
-The tracker code is the **style reference for MVVM shape**, not for the data layer. Copy from it:
-page-model-per-page, constructor DI, `[ObservableProperty]` / `[RelayCommand]` (never hand-written
-`INotifyPropertyChanged`), `x:DataType` on every page and template, `ModalErrorHandler` for errors in
-commands.
+The Yahtzee page models are the **style reference for MVVM shape**: page-model-per-page, constructor DI,
+`[ObservableProperty]` / `[RelayCommand]` (never hand-written `INotifyPropertyChanged`), `x:DataType` on
+every page and template, `ModalErrorHandler` for errors in commands.
 
-Do **not** copy its data layer. The duplicated schema and ordinal column mapping above are existing
-debt, not a pattern to repeat. The game needs one row of state; it does not need a repository class
-hierarchy.
-
-- New files: **file-scoped namespaces** (`namespace Yahtzee.X;`). The newer Yahtzee files already do
-  this; older tracker files use block namespaces. Use file-scoped in anything new. Don't reformat
-  existing files to match.
+- New files: **file-scoped namespaces** (`namespace Yahtzee.X;`). Some older files use block
+  namespaces; leave those alone rather than reformatting them to match.
 - Registrations go in `MauiProgram.cs`; Shell routes use `AddTransientWithShellRoute<TPage, TModel>("route")`.
 - Prefer editing existing files over creating new ones.
 - No new NuGet packages or abstraction layers without asking first.
@@ -90,5 +78,4 @@ hierarchy.
 
 Small diffs, one concern at a time. State assumptions in the reply instead of silently choosing. Keep
 replies concise: answer first, short paragraphs, no restating the request and no narration of tool
-calls. Do not refactor tracker code on the way past it — it is scheduled for deletion, so effort spent
-there is wasted.
+calls.
